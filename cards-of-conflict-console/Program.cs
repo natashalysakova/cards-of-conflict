@@ -1,4 +1,6 @@
-﻿public class CardsOfConflict
+﻿using System.Text.Json.Serialization;
+
+public class CardsOfConflict
 {
     static bool isExit = false;
 
@@ -12,6 +14,8 @@
             Console.WriteLine("2. Join game");
             Console.WriteLine("3. Exit");
 
+            //Console.WriteLine("4. Export");
+
             Console.WriteLine("Select: ");
             var selected = Console.ReadKey();
 
@@ -21,11 +25,16 @@
                     new Game().HostNewGame();
                     break;
                 case ConsoleKey.D2:
-                    new Game().JoinTheGame();
+                    var game = new Game();
+                    _ = game.JoinTheGame();
+                    game.Dispose();
                     break;
                 case ConsoleKey.D3:
                     isExit = true;
                     break;
+                //case ConsoleKey.D4:
+                //new Game().ReadFromFile();
+                //break;
                 default:
                     break;
             }

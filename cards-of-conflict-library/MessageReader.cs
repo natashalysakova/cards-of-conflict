@@ -2,43 +2,84 @@
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 
-public class MessageManager
+public class MessageManager : IDisposable
 {
     const string SEPARATOR = "&*";
     Queue<Message> Messages;
+    Queue<Message> ToSend;
     object locker = new object();
+    CancellationTokenSource cancellationTokenSource;
 
     public MessageManager(TcpClient client)
     {
         Client = client;
         Messages = new Queue<Message>();
-        Task.Run(MonitorMessages);
+        ToSend = new Queue<Message>();
+        cancellationTokenSource = new CancellationTokenSource();
+        Task.Run(MonitorMessages, cancellationTokenSource.Token);
+        Task.Run(SendingAgent, cancellationTokenSource.Token);
     }
 
     public TcpClient Client { get; }
 
     public Message GetNextMessage()
     {
-        while (Messages.Count == 0)
+        Message message;
+        while (!Messages.TryDequeue(out message))
         {
             // waiting for next message
-            Thread.Sleep(100);
-        }
+            Thread.Sleep(200);
 
+        }
+        return message;
+
+    }
+
+    private void SendingAgent()
+    {
+        while (!cancellationTokenSource.Token.IsCancellationRequested)
+        {
+            Thread.Sleep(200);
+            if (!Client.Connected)
+            {
+                //Console.WriteLine("Socket not connected");
+                break;
+            }
+
+            lock (locker)
+            {
+                if (ToSend.TryDequeue(out var message))
+                {
+                    var data = ObjectToByteArray(message);
+                    Client.GetStream().Write(data, 0, data.Length);
+                }
+            }
+
+
+        }
+    }
+
+    internal void HealthCheck()
+    {
+        var message = new Message(MessageType.none);
         lock (locker)
         {
-            return Messages.Dequeue();
+            var data = ObjectToByteArray(message);
+            Client.GetStream().Write(data, 0, data.Length);
         }
     }
 
     private void MonitorMessages()
     {
-        while (true)
+        while (!cancellationTokenSource.Token.IsCancellationRequested)
         {
             Thread.Sleep(200);
 
             if (!Client.Connected)
-                throw new Exception("Socket not connected");
+            {
+                //Console.WriteLine("Socket not connected");
+                break;
+            }
 
             NetworkStream stream = Client.GetStream();
             while (Client.Available < 4)
@@ -50,14 +91,11 @@ public class MessageManager
             Byte[] bytes = new byte[Client.Available];
             stream.Read(bytes, 0, bytes.Length);
 
-            var messages = ByteArrayToObject<IEnumerable<Message>>(bytes);
+            var message = ByteArrayToObject<Message>(bytes);
             lock (locker)
             {
-                foreach (var message in messages)
-                {
-                    Messages.Enqueue(message);
-                }
-
+                //Console.WriteLine("message added to the queue:" + message.Type);
+                Messages.Enqueue(message);
             }
         }
     }
@@ -71,12 +109,10 @@ public class MessageManager
 
     internal void SendMessage(Message message)
     {
-        SendMessages(new List<Message>() { message });
-    }
-    private void SendMessages(IEnumerable<Message> messages)
-    {
-        var data = ObjectToByteArray(messages);
-        Client.GetStream().Write(data, 0, data.Length);
+        lock (locker)
+        {
+            ToSend.Enqueue(message);
+        }
     }
 
     internal void RequestName()
@@ -113,6 +149,11 @@ public class MessageManager
         message.Text = myPlayerName;
         SendMessage(message);
     }
+
+    public void Dispose()
+    {
+        cancellationTokenSource.Cancel();
+    }
 }
 
 [Serializable]
@@ -125,5 +166,6 @@ public class Message
     public MessageType Type { get; set; }
     public string Text { get; set; }
     public dynamic Attachment { get; set; }
+    public int CardNumber { get; set; }
 
 }

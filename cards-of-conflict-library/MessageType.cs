@@ -5,8 +5,10 @@ public enum MessageType
     GetCards = 1,
     SendMessage = 2,
     GetMessage = 3,
-    GetWinner = 4,
+    Winner = 4,
     none = 5,
     SendName = 6,
-    RequestName = 7
+    RequestName = 7,
+    NewRound = 8,
+    GameOver = 9
 }

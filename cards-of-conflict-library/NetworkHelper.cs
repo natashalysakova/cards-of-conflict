@@ -6,9 +6,10 @@ class NetworkHelper
     public static IPAddress GetLocalIPAddress()
     {
         var host = Dns.GetHostEntry(Dns.GetHostName());
+
         foreach (var ip in host.AddressList)
         {
-            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            if (ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString() != "127.0.0.1")
             {
                 return ip;
             }

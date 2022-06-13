@@ -1,30 +1,45 @@
-﻿[Serializable]
+﻿using System.Text.Json;
+
+[Serializable]
 class Deck
 {
-    Stack<BlackCard> blackCards;
-    Stack<WhiteCard> whiteCards;
+    Stack<BlackCard> blackStack;
+    Stack<WhiteCard> whiteStack;
 
+    List<BlackCard> blackCards;
+    List<WhiteCard> whiteCards;
     List<BlackCard> usedBlackCards;
     List<WhiteCard> usedWhiteCards;
 
+    internal Stack<BlackCard> BlackCards { get => blackStack; }
+    internal Stack<WhiteCard> WhiteCards { get => whiteStack; }
+
     public Deck()
     {
-        blackCards = LoadBlackCards().ShuffleIntoStack();
-        whiteCards = LoadWhiteCards().ShuffleIntoStack();
+        blackStack = new Stack<BlackCard>();
+        whiteStack = new Stack<WhiteCard>();
 
         usedBlackCards = new List<BlackCard>();
         usedWhiteCards = new List<WhiteCard>();
+        blackCards = new List<BlackCard>();
+        whiteCards = new List<WhiteCard>();
+    }
+
+    private void Shuffle()
+    {
+        blackStack = blackCards.ShuffleIntoStack();
+        whiteStack = whiteCards.ShuffleIntoStack();
     }
 
     public BlackCard TakeBlackCard()
     {
         BlackCard result;
-        blackCards.TryPop(out result);
+        blackStack.TryPop(out result);
 
         if (result is null)
         {
-            blackCards = usedBlackCards.ShuffleIntoStack();
-            result = blackCards.Pop();
+            blackStack = usedBlackCards.ShuffleIntoStack();
+            result = blackStack.Pop();
         }
         return result;
     }
@@ -51,88 +66,33 @@ class Deck
         for (int i = 0; i < count; i++)
         {
             WhiteCard result;
-            whiteCards.TryPop(out result);
+            whiteStack.TryPop(out result);
             if (result is null)
             {
-                whiteCards = usedWhiteCards.ShuffleIntoStack();
-                result = whiteCards.Pop();
+                whiteStack = usedWhiteCards.ShuffleIntoStack();
+                result = whiteStack.Pop();
             }
             list.Add(result);
         }
         return list;
     }
 
-    private IEnumerable<WhiteCard> LoadWhiteCards()
+    public void AddCards(string deckName)
     {
-        return new List<WhiteCard>() {
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-             new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-             new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard(),
-            new WhiteCard()
-        };
+        whiteCards.AddRange(ReadDeck<WhiteCard>($"Decks/{deckName}/white.json"));
+        blackCards.AddRange(ReadDeck<BlackCard>($"Decks/{deckName}/black.json"));
+
+        Shuffle();
     }
 
-    private IEnumerable<BlackCard> LoadBlackCards()
+    private IEnumerable<T> ReadDeck<T> (string path)
     {
-        return new List<BlackCard>() {
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard(),
-            new BlackCard()
-        };
+        string json;
+        using (var s = new StreamReader(File.OpenRead(path)))
+        {
+            json = s.ReadToEnd();
+        }
 
-
+        return JsonSerializer.Deserialize<IEnumerable<T>>(json);
     }
 }

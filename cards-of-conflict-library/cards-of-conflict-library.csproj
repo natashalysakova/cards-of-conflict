@@ -7,4 +7,20 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Decks\" />
+    <None Remove="Decks\Main Game\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Decks\" />
+    <Folder Include="Decks\Main Game\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Decks\Main Game\black.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Decks\Main Game\white.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
