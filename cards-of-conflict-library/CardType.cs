@@ -1,0 +1,4 @@
+﻿enum CardType
+{
+    Black, White
+}
