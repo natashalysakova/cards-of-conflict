@@ -86,7 +86,15 @@ public class Game : IDisposable
             Console.WriteLine($"{i+1} {availableDecks.ElementAt(i)}");
         }
 
-        IEnumerable<int> selected = Console.ReadLine().Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x));
+        IEnumerable<int> selected = new List<int>();
+        if(availableDecks.Count() == 1)
+        {
+            selected.Append(1);
+        }
+        else
+        {
+            selected = Console.ReadLine().Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x));
+        }
 
         Console.WriteLine("Selected decks: ");
         var deck = new Deck();
