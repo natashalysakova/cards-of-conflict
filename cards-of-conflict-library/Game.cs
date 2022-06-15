@@ -113,7 +113,7 @@ public class Game : IDisposable
 
     private IEnumerable<string> GetDeckList()
     {
-        var path = Directory.GetDirectories("Decks");
+        var path = Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Decks"));
         foreach (var item in path)
         {
             DirectoryInfo info = new DirectoryInfo(item);
@@ -253,7 +253,7 @@ public class Game : IDisposable
             }
 
             NotifyPlayers($"Waiting for {tsar.Name} to decide a winner");
-            var winnerNumber = tsar.GetWinner();
+            var winnerNumber = tsar.GetWinner(answers.Count);
 
             var winnerPlayer = shuffledPlayers.ElementAt(winnerNumber - 1);
             winnerPlayer.AddWinPoint();

@@ -88,7 +88,7 @@ class Deck
     private IEnumerable<T> ReadDeck<T> (string path)
     {
         string json;
-        using (var s = new StreamReader(File.OpenRead(path)))
+        using (var s = new StreamReader(File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path))))
         {
             json = s.ReadToEnd();
         }

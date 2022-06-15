@@ -56,7 +56,7 @@ public class NormalGame : IDisposable
                     break;
                 case MessageType.GetCards:
 
-                    var number = nexMessage.CardNumber;
+                    var number= nexMessage.CardNumber;
                     Console.WriteLine($"Choose {number} answers");
                     for (int i = 0; i < number; i++)
                     {
@@ -87,9 +87,20 @@ public class NormalGame : IDisposable
                     int winner;
                     while (true)
                     {
+                        var answersNumber = nexMessage.Attachment;
                         Console.WriteLine("Select a winner:");
                         if (int.TryParse(Console.ReadLine(), out winner))
-                            break;
+                        {
+                            if (winner > answersNumber || winner < 1)
+                            {
+                                Console.WriteLine("Wrong answer");
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                            
                     }
 
 

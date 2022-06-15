@@ -107,7 +107,7 @@ class Player
         return taken;
     }
 
-    internal int GetWinner()
+    internal int GetWinner(int answersNumber)
     {
         if (HostPlayer)
         {
@@ -119,6 +119,7 @@ class Player
         else
         {
             var message = new Message(MessageType.Winner);
+            message.Attachment = answersNumber;
             messageManager.SendMessage(message);
 
             var response = messageManager.GetNextMessage();
