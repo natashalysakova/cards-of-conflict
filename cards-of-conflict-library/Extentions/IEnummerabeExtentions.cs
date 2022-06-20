@@ -1,28 +1,26 @@
-﻿using System;
-using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-
-static class IEnummerabeExtentions
+﻿namespace CardsOfConflict.Library.Extentions
 {
-    public static Stack<T> ShuffleIntoStack<T>(this IEnumerable<T> collection)
+    static class IEnummerabeExtentions
     {
-        var r = new Random();
-        var stack = new Stack<T>();
-        foreach (var item in collection.OrderBy(x => r.Next()))
+        public static Stack<T> ShuffleIntoStack<T>(this IEnumerable<T> collection)
         {
-            stack.Push(item);
+            var r = new Random();
+            var stack = new Stack<T>();
+            foreach (var item in collection.OrderBy(x => r.Next()))
+            {
+                stack.Push(item);
+            }
+            return stack;
         }
-        return stack;
+
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> collection)
+        {
+            var r = new Random();
+            foreach (var item in collection.OrderBy(x => r.Next()))
+            {
+                yield return item;
+            }
+
+        }
     }
-
-    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> collection)
-    {
-        var r = new Random();
-        foreach (var item in collection.OrderBy(x => r.Next()))
-        {
-            yield return item;
-        }
-
-    }    
 }

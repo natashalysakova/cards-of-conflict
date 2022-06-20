@@ -1,14 +1,17 @@
-﻿[Serializable]
-public enum MessageType
+﻿namespace CardsOfConflict.Library.Enums
 {
-    SendCards = 0,
-    GetCards = 1,
-    SendMessage = 2,
-    GetMessage = 3,
-    Winner = 4,
-    none = 5,
-    SendName = 6,
-    RequestName = 7,
-    NewRound = 8,
-    GameOver = 9
+    [Serializable]
+    public enum MessageType
+    {
+        SendCards = 0,
+        GetCards = 1,
+        SendMessage = 2,
+        GetMessage = 3,
+        Winner = 4,
+        none = 5,
+        SendName = 6,
+        RequestName = 7,
+        NewRound = 8,
+        GameOver = 9
+    }
 }

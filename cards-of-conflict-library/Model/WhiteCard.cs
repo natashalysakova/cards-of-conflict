@@ -1,7 +1,13 @@
-﻿[Serializable]
-class WhiteCard : Card
-{
-    public WhiteCard(string text) : base(text) { }
+﻿using CardsOfConflict.Library.Enums;
 
-    public override CardType Type => CardType.White;
+namespace CardsOfConflict.Library.Model
+{
+
+    [Serializable]
+    class WhiteCard : Card
+    {
+        public WhiteCard(string text) : base(text) { }
+
+        public override CardType Type => CardType.White;
+    }
 }

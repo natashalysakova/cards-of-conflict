@@ -5,7 +5,7 @@ VisualStudioVersion = 25.0.1700.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cards-of-conflict-console", "cards-of-conflict-console\cards-of-conflict-console.csproj", "{5ECAD90C-123D-49B1-957E-C6FA9EAF58FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cards-of-conflict-library", "cards-of-conflict-library\cards-of-conflict-library.csproj", "{6400F1AA-F0A8-490C-A94D-8FE666FEDFB7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardsOfConflict.Library", "cards-of-conflict-library\CardsOfConflict.Library.csproj", "{6400F1AA-F0A8-490C-A94D-8FE666FEDFB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

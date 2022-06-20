@@ -1,6 +1,11 @@
-﻿interface ICard
+﻿using CardsOfConflict.Library.Enums;
+
+namespace CardsOfConflict.Library.Interfaces
 {
-    CardType Type { get; }
-    string Text { get; set; }
-    public Guid ID { get; }
+    interface ICard
+    {
+        CardType Type { get; }
+        string Text { get; set; }
+        public Guid ID { get; }
+    }
 }

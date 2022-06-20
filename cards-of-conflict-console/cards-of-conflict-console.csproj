@@ -9,6 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\cards-of-conflict-library\cards-of-conflict-library.csproj" />
+    <ProjectReference Include="..\cards-of-conflict-library\CardsOfConflict.Library.csproj" />
   </ItemGroup>
 </Project>
