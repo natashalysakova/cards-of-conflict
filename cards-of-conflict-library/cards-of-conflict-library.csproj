@@ -10,10 +10,22 @@
   <ItemGroup>
     <None Remove="Decks\" />
     <None Remove="Decks\Main Game\" />
+    <None Remove="Model\" />
+    <None Remove="Game\" />
+    <None Remove="Interfaces\" />
+    <None Remove="Enums\" />
+    <None Remove="Extentions\" />
+    <None Remove="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Decks\" />
     <Folder Include="Decks\Main Game\" />
+    <Folder Include="Model\" />
+    <Folder Include="Game\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Extentions\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Decks\Main Game\black.json">
