@@ -93,11 +93,7 @@ namespace CardsOfConflict.Library.Game
             }
             else
             {
-<<<<<<< HEAD
                 var selectedString = Console.ReadLine() ?? string.Empty;
-=======
-                var selectedString = Console.ReadLine() ?? String.Empty;
->>>>>>> master
                 selected = selectedString.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
             }
 
@@ -290,11 +286,7 @@ namespace CardsOfConflict.Library.Game
             }
         }
 
-<<<<<<< HEAD
         private IPlayer SetATsar(IPlayer player)
-=======
-        IPlayer SetATsar(IPlayer player)
->>>>>>> master
         {
             foreach (var p in players)
             {

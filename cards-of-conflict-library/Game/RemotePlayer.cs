@@ -1,28 +1,15 @@
-<<<<<<< HEAD
 ﻿using CardsOfConflict.Library.Model;
 
 namespace CardsOfConflict.Library.Game;
 
 internal class RemotePlayer : Player
-=======
-﻿using CardsOfConflict.Library.Enums;
-using CardsOfConflict.Library.Model;
-
-namespace CardsOfConflict.Library.Game;
-
-class RemotePlayer : Player
->>>>>>> master
 {
     public RemotePlayer(string name, MessageManager manager) : base(name)
     {
         messageManager = manager;
     }
 
-<<<<<<< HEAD
     private readonly MessageManager messageManager;
-=======
-    readonly MessageManager messageManager;
->>>>>>> master
 
     public override void Notify(string text)
     {
@@ -49,11 +36,7 @@ class RemotePlayer : Player
 
         foreach (var card in taken)
         {
-<<<<<<< HEAD
             _ = Cards.RemoveAll(x => x.ID == card.ID);
-=======
-            Cards.RemoveAll(x => x.ID == card.ID);
->>>>>>> master
         }
         return taken;
     }

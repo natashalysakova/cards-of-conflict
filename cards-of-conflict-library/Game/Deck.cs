@@ -117,11 +117,6 @@ namespace CardsOfConflict.Library.Game
                 Console.WriteLine($"Cannot deserialize deck from {path} : {ex.Message}");
                 throw;
             }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> master
         }
 
         private static void fillIds(IEnumerable<ICard> cards)
@@ -133,10 +128,6 @@ namespace CardsOfConflict.Library.Game
                     card.SetNewId();
                 }
             }
-<<<<<<< HEAD
->>>>>>> 17ece98 (full refactoring)
-=======
->>>>>>> master
         }
     }
 }

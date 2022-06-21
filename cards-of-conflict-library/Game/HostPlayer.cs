@@ -2,11 +2,7 @@
 
 namespace CardsOfConflict.Library.Game;
 
-<<<<<<< HEAD
 internal class HostPlayer : Player
-=======
-class HostPlayer : Player
->>>>>>> master
 {
     public HostPlayer(string name) : base (name)
     {
@@ -24,11 +20,7 @@ class HostPlayer : Player
 
     public override IEnumerable<WhiteCard> GetAnswers(int answersNumber)
     {
-<<<<<<< HEAD
         List<WhiteCard> taken = new();
-=======
-        var taken = new List<WhiteCard>();
->>>>>>> master
 
         Console.WriteLine($"Choose {answersNumber} answers");
         for (int i = 0; i < answersNumber; i++)
@@ -38,27 +30,17 @@ class HostPlayer : Player
             {
                 Console.WriteLine($"Select answer #{i + 1}:");
                 if (int.TryParse(Console.ReadLine(), out id))
-<<<<<<< HEAD
                 {
                     break;
                 }
-=======
-                    break;
->>>>>>> master
             }
 
             taken.Add(Cards[id - 1]);
         }
 
-<<<<<<< HEAD
         foreach (WhiteCard card in taken)
         {
             _ = Cards.RemoveAll(x => x.ID == card.ID);
-=======
-        foreach (var card in taken)
-        {
-            Cards.RemoveAll(x => x.ID == card.ID);
->>>>>>> master
         }
         return taken;
     }

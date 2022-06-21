@@ -2,11 +2,7 @@
 
 namespace CardsOfConflict.Library.Game;
 
-<<<<<<< HEAD
 internal abstract class Player : IPlayer
-=======
-abstract class Player : IPlayer
->>>>>>> master
 {
     public Player(string name)
     {

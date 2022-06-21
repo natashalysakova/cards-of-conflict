@@ -3,21 +3,13 @@ using CardsOfConflict.Library.Interfaces;
 namespace CardsOfConflict.Library.Model;
 
 [Serializable]
-<<<<<<< HEAD
 public abstract class Card : ICard
-=======
-abstract class Card : ICard
->>>>>>> master
 {
     public Card(string text)
     {
         Text = text;
     }
-<<<<<<< HEAD
     public abstract CardType Type { get; }
-=======
-    abstract public CardType Type { get; }
->>>>>>> master
     public string Text { get; set; }
     public Guid ID { get; private set; }
 
