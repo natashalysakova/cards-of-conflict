@@ -8,42 +8,71 @@ namespace CardsOfConflict.Library.Game
 {
     public class MessageManager : IDisposable
     {
-        const string SEPARATOR = "&*";
-        Queue<Message> Messages;
-        Queue<Message> ToSend;
-        object locker = new object();
-        CancellationTokenSource cancellationTokenSource;
+        const int delay = 50;
+        readonly Queue<Message> Messages = new();
+        readonly Queue<Message> ToSend = new();
+        readonly object locker = new();
+        readonly CancellationTokenSource cancellationTokenSource = new();
 
         public MessageManager(TcpClient client)
         {
             Client = client;
-            Messages = new Queue<Message>();
-            ToSend = new Queue<Message>();
-            cancellationTokenSource = new CancellationTokenSource();
             Task.Run(MonitorMessages, cancellationTokenSource.Token);
             Task.Run(SendingAgent, cancellationTokenSource.Token);
+        }
+
+        internal void RequestCards(int answersNumber)
+        {
+            var message = new Message(MessageType.GetCards)
+            {
+                CardNumber = answersNumber
+            };
+            SendMessage(message);
         }
 
         public TcpClient Client { get; }
 
         public Message GetNextMessage()
         {
-            Message message;
+            Message? message;
             while (!Messages.TryDequeue(out message))
             {
                 // waiting for next message
-                Thread.Sleep(200);
-
+                Thread.Sleep(delay);
             }
             return message;
 
+        }
+
+        internal void SendWinner(int winnerAnswer)
+        {
+            var message = new Message(MessageType.Winner)
+            {
+                Attachment = winnerAnswer
+            };
+            SendMessage(message);
+        }
+
+        internal void GameOver()
+        {
+            var message = new Message(MessageType.GameOver);
+            SendMessage(message);
+        }
+
+        internal void NewRound(int round)
+        {
+            var message = new Message(MessageType.NewRound)
+            {
+                Attachment = round
+            };
+            SendMessage(message);
         }
 
         private void SendingAgent()
         {
             while (!cancellationTokenSource.Token.IsCancellationRequested)
             {
-                Thread.Sleep(200);
+                Thread.Sleep(delay);
                 if (!Client.Connected)
                 {
                     //Console.WriteLine("Socket not connected");
@@ -56,7 +85,7 @@ namespace CardsOfConflict.Library.Game
                     {
                         var data = ObjectToByteArray(message);
                         Client.GetStream().Write(data, 0, data.Length);
-                    }
+                    }  
                 }
 
 
@@ -77,7 +106,7 @@ namespace CardsOfConflict.Library.Game
         {
             while (!cancellationTokenSource.Token.IsCancellationRequested)
             {
-                Thread.Sleep(200);
+                Thread.Sleep(delay);
 
                 if (!Client.Connected)
                 {
@@ -89,29 +118,43 @@ namespace CardsOfConflict.Library.Game
                 while (Client.Available < 4)
                 {
                     //waiting data
-                    Thread.Sleep(100);
+                    Thread.Sleep(50);
                 }
 
                 Byte[] bytes = new byte[Client.Available];
                 stream.Read(bytes, 0, bytes.Length);
 
                 var message = ByteArrayToObject<Message>(bytes);
-                lock (locker)
+                if(message != null)
                 {
-                    //Console.WriteLine("message added to the queue:" + message.Type);
-                    Messages.Enqueue(message);
+                    lock (locker)
+                    {
+                        Messages.Enqueue(message);
+                    }
                 }
             }
         }
 
-        internal void SendTextMessage(string text)
+        internal void SendCards(dynamic cards)
         {
-            var message = new Message(MessageType.SendMessage);
-            message.Text = text;
+            var message = new Message(MessageType.SendCards)
+            {
+                Attachment = cards
+            };
+            
             SendMessage(message);
         }
 
-        internal void SendMessage(Message message)
+        internal void SendTextMessage(string text)
+        {
+            var message = new Message(MessageType.SendMessage)
+            {
+                Text = text
+            };
+            SendMessage(message);
+        }
+
+        private void SendMessage(Message message)
         {
             lock (locker)
             {
@@ -128,29 +171,32 @@ namespace CardsOfConflict.Library.Game
         static byte[] ObjectToByteArray<T>(T obj)
         {
             if (obj == null)
-                return null;
-            BinaryFormatter bf = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
+                throw new NullReferenceException("Object obj cannot be null");
+            var bf = new BinaryFormatter();
+            using var ms = new MemoryStream();
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+            bf.Serialize(ms, obj);
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+            return ms.ToArray();
+
         }
-        static T ByteArrayToObject<T>(byte[] obj)
+        static T? ByteArrayToObject<T>(byte[] obj)
         {
             if (obj.Length == 0)
                 return default;
-            BinaryFormatter bf = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream(obj))
-            {
-                return (T)bf.Deserialize(ms);
-            }
+            var bf = new BinaryFormatter();
+            using var ms = new MemoryStream(obj);
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+            return (T)bf.Deserialize(ms);
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
         }
 
         internal void SendName(string myPlayerName)
         {
-            var message = new Message(MessageType.SendName);
-            message.Text = myPlayerName;
+            var message = new Message(MessageType.SendName)
+            {
+                Text = myPlayerName
+            };
             SendMessage(message);
         }
 

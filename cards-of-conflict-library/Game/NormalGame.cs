@@ -6,12 +6,7 @@ namespace CardsOfConflict.Library.Game
 {
     public class NormalGame : IDisposable
     {
-        MessageManager messageManager;
-
-        public NormalGame()
-        {
-            messageManager = new MessageManager(new TcpClient());
-        }
+        readonly MessageManager messageManager = new(new TcpClient());
 
         public void Dispose()
         {
@@ -49,7 +44,7 @@ namespace CardsOfConflict.Library.Game
 
             while (isGameActive)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(200);
 
                 var nexMessage = messageManager.GetNextMessage();
                 switch (nexMessage.Type)
@@ -73,10 +68,9 @@ namespace CardsOfConflict.Library.Game
                             }
 
 
-                            var response = new Message(MessageType.SendCards);
-                            response.Attachment = cards[id - 1];
+                            
                             cards.RemoveAt(id - 1);
-                            messageManager.SendMessage(response);
+                            messageManager.SendCards(cards[id - 1]);
                         }
 
                         break;
@@ -107,10 +101,7 @@ namespace CardsOfConflict.Library.Game
 
                         }
 
-
-                        var responseWinner = new Message(MessageType.Winner);
-                        responseWinner.Attachment = winner;
-                        messageManager.SendMessage(responseWinner);
+                        messageManager.SendWinner(winner);
 
                         break;
                     case MessageType.RequestName:
