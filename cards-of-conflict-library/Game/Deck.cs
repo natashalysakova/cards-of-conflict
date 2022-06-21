@@ -118,7 +118,10 @@ namespace CardsOfConflict.Library.Game
                 throw;
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> master
         }
 
         private static void fillIds(IEnumerable<ICard> cards)
@@ -130,7 +133,10 @@ namespace CardsOfConflict.Library.Game
                     card.SetNewId();
                 }
             }
+<<<<<<< HEAD
 >>>>>>> 17ece98 (full refactoring)
+=======
+>>>>>>> master
         }
     }
 }

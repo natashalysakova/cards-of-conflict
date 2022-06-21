@@ -6,7 +6,11 @@ namespace CardsOfConflict.Library.Game
 {
     public class NormalGame : IDisposable
     {
+<<<<<<< HEAD
         private readonly MessageManager messageManager = new(new TcpClient());
+=======
+        readonly MessageManager messageManager = new(new TcpClient());
+>>>>>>> master
 
         public void Dispose()
         {

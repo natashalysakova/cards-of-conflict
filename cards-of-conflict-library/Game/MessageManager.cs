@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using CardsOfConflict.Library.Enums;
 using CardsOfConflict.Library.Model;
@@ -7,17 +8,17 @@ namespace CardsOfConflict.Library.Game
 {
     public class MessageManager : IDisposable
     {
-        private const int delay = 50;
-        private readonly Queue<Message> Messages = new();
-        private readonly Queue<Message> ToSend = new();
-        private readonly object locker = new();
-        private readonly CancellationTokenSource cancellationTokenSource = new();
+        const int delay = 50;
+        readonly Queue<Message> Messages = new();
+        readonly Queue<Message> ToSend = new();
+        readonly object locker = new();
+        readonly CancellationTokenSource cancellationTokenSource = new();
 
         public MessageManager(TcpClient client)
         {
             Client = client;
-            _ = Task.Run(MonitorMessages, cancellationTokenSource.Token);
-            _ = Task.Run(SendingAgent, cancellationTokenSource.Token);
+            Task.Run(MonitorMessages, cancellationTokenSource.Token);
+            Task.Run(SendingAgent, cancellationTokenSource.Token);
         }
 
         internal void RequestCards(int answersNumber)
@@ -120,8 +121,8 @@ namespace CardsOfConflict.Library.Game
                     Thread.Sleep(50);
                 }
 
-                byte[] bytes = new byte[Client.Available];
-                _ = stream.Read(bytes, 0, bytes.Length);
+                Byte[] bytes = new byte[Client.Available];
+                stream.Read(bytes, 0, bytes.Length);
 
                 var message = ByteArrayToObject<Message>(bytes);
                 if(message != null)
@@ -167,13 +168,10 @@ namespace CardsOfConflict.Library.Game
             SendMessage(message);
         }
 
-        private static byte[] ObjectToByteArray<T>(T obj)
+        static byte[] ObjectToByteArray<T>(T obj)
         {
             if (obj == null)
-            {
                 throw new NullReferenceException("Object obj cannot be null");
-            }
-
             var bf = new BinaryFormatter();
             using var ms = new MemoryStream();
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
@@ -182,14 +180,10 @@ namespace CardsOfConflict.Library.Game
             return ms.ToArray();
 
         }
-
-        private static T? ByteArrayToObject<T>(byte[] obj)
+        static T? ByteArrayToObject<T>(byte[] obj)
         {
             if (obj.Length == 0)
-            {
                 return default;
-            }
-
             var bf = new BinaryFormatter();
             using var ms = new MemoryStream(obj);
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
