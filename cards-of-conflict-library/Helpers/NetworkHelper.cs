@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 namespace CardsOfConflict.Library.Helpers;
 
-class NetworkHelper
+internal class NetworkHelper
 {
     public static IPAddress GetLocalIPAddress()
     {

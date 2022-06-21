@@ -1,6 +1,6 @@
 ﻿namespace CardsOfConflict.Library.Extentions;
 
-static class IEnummerabeExtentions
+internal static class IEnummerabeExtentions
 {
     public static Stack<T> ShuffleIntoStack<T>(this IEnumerable<T> collection)
     {

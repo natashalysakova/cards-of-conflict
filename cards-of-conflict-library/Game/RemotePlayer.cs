@@ -1,29 +1,28 @@
-﻿using CardsOfConflict.Library.Enums;
-using CardsOfConflict.Library.Model;
+﻿using CardsOfConflict.Library.Model;
 
 namespace CardsOfConflict.Library.Game;
 
-class RemotePlayer : Player
+internal class RemotePlayer : Player
 {
     public RemotePlayer(string name, MessageManager manager) : base(name)
     {
         messageManager = manager;
     }
 
-    readonly MessageManager messageManager;
+    private readonly MessageManager messageManager;
 
-    override public void Notify(string text)
+    public override void Notify(string text)
     {
         messageManager.SendTextMessage(text);
     }
 
-    override public void SendCards(IEnumerable<WhiteCard> cards)
+    public override void SendCards(IEnumerable<WhiteCard> cards)
     {
         messageManager.SendCards(cards);
         Cards.AddRange(cards);
     }
 
-    override public IEnumerable<WhiteCard> GetAnswers(int answersNumber)
+    public override IEnumerable<WhiteCard> GetAnswers(int answersNumber)
     {
         var taken = new List<WhiteCard>();
 
@@ -37,15 +36,13 @@ class RemotePlayer : Player
 
         foreach (var card in taken)
         {
-            Cards.RemoveAll(x => x.ID == card.ID);
+            _ = Cards.RemoveAll(x => x.ID == card.ID);
         }
         return taken;
     }
 
-    override public int GetWinner(int answersNumber)
+    public override int GetWinner(int answersNumber)
     {
-
-        
         messageManager.SendWinner(answersNumber);
 
         var response = messageManager.GetNextMessage();
@@ -53,17 +50,17 @@ class RemotePlayer : Player
 
     }
 
-    override public void NewRound(int round)
+    public override void NewRound(int round)
     {
         messageManager.NewRound(round);
     }
 
-    override public void GameOver()
+    public override void GameOver()
     {
         messageManager.GameOver();
     }
 
-    override public void Stop()
+    public override void Stop()
     {
         messageManager.Dispose();
     }

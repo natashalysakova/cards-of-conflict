@@ -2,7 +2,7 @@
 
 namespace CardsOfConflict.Library.Game;
 
-abstract class Player : IPlayer
+internal abstract class Player : IPlayer
 {
     public Player(string name)
     {

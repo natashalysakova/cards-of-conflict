@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using CardsOfConflict.Library.Enums;
 using CardsOfConflict.Library.Model;
@@ -8,16 +7,17 @@ namespace CardsOfConflict.Library.Game
 {
     public class MessageManager : IDisposable
     {
-        readonly Queue<Message> Messages = new();
-        readonly Queue<Message> ToSend = new();
-        readonly object locker = new();
-        readonly CancellationTokenSource cancellationTokenSource = new();
+        private const int delay = 50;
+        private readonly Queue<Message> Messages = new();
+        private readonly Queue<Message> ToSend = new();
+        private readonly object locker = new();
+        private readonly CancellationTokenSource cancellationTokenSource = new();
 
         public MessageManager(TcpClient client)
         {
             Client = client;
-            Task.Run(MonitorMessages, cancellationTokenSource.Token);
-            Task.Run(SendingAgent, cancellationTokenSource.Token);
+            _ = Task.Run(MonitorMessages, cancellationTokenSource.Token);
+            _ = Task.Run(SendingAgent, cancellationTokenSource.Token);
         }
 
         internal void RequestCards(int answersNumber)
@@ -37,7 +37,7 @@ namespace CardsOfConflict.Library.Game
             while (!Messages.TryDequeue(out message))
             {
                 // waiting for next message
-                Thread.Sleep(50);
+                Thread.Sleep(delay);
             }
             return message;
 
@@ -71,7 +71,7 @@ namespace CardsOfConflict.Library.Game
         {
             while (!cancellationTokenSource.Token.IsCancellationRequested)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(delay);
                 if (!Client.Connected)
                 {
                     //Console.WriteLine("Socket not connected");
@@ -105,7 +105,7 @@ namespace CardsOfConflict.Library.Game
         {
             while (!cancellationTokenSource.Token.IsCancellationRequested)
             {
-                Thread.Sleep(200);
+                Thread.Sleep(delay);
 
                 if (!Client.Connected)
                 {
@@ -117,11 +117,11 @@ namespace CardsOfConflict.Library.Game
                 while (Client.Available < 4)
                 {
                     //waiting data
-                    Thread.Sleep(100);
+                    Thread.Sleep(50);
                 }
 
-                Byte[] bytes = new byte[Client.Available];
-                stream.Read(bytes, 0, bytes.Length);
+                byte[] bytes = new byte[Client.Available];
+                _ = stream.Read(bytes, 0, bytes.Length);
 
                 var message = ByteArrayToObject<Message>(bytes);
                 if(message != null)
@@ -140,7 +140,7 @@ namespace CardsOfConflict.Library.Game
             {
                 Attachment = cards
             };
-
+            
             SendMessage(message);
         }
 
@@ -167,10 +167,13 @@ namespace CardsOfConflict.Library.Game
             SendMessage(message);
         }
 
-        static byte[] ObjectToByteArray<T>(T obj)
+        private static byte[] ObjectToByteArray<T>(T obj)
         {
             if (obj == null)
+            {
                 throw new NullReferenceException("Object obj cannot be null");
+            }
+
             var bf = new BinaryFormatter();
             using var ms = new MemoryStream();
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
@@ -179,10 +182,14 @@ namespace CardsOfConflict.Library.Game
             return ms.ToArray();
 
         }
-        static T? ByteArrayToObject<T>(byte[] obj)
+
+        private static T? ByteArrayToObject<T>(byte[] obj)
         {
             if (obj.Length == 0)
+            {
                 return default;
+            }
+
             var bf = new BinaryFormatter();
             using var ms = new MemoryStream(obj);
 #pragma warning disable SYSLIB0011 // Type or member is obsolete

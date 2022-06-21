@@ -2,25 +2,25 @@
 
 namespace CardsOfConflict.Library.Game;
 
-class HostPlayer : Player
+internal class HostPlayer : Player
 {
     public HostPlayer(string name) : base (name)
     {
     }
 
-    override public void Notify(string text)
+    public override void Notify(string text)
     {
         Console.WriteLine(text);
     }
 
-    override public void SendCards(IEnumerable<WhiteCard> cards)
+    public override void SendCards(IEnumerable<WhiteCard> cards)
     {
         Cards.AddRange(cards);
     }
 
-    override public IEnumerable<WhiteCard> GetAnswers(int answersNumber)
+    public override IEnumerable<WhiteCard> GetAnswers(int answersNumber)
     {
-        var taken = new List<WhiteCard>();
+        List<WhiteCard> taken = new();
 
         Console.WriteLine($"Choose {answersNumber} answers");
         for (int i = 0; i < answersNumber; i++)
@@ -30,20 +30,22 @@ class HostPlayer : Player
             {
                 Console.WriteLine($"Select answer #{i + 1}:");
                 if (int.TryParse(Console.ReadLine(), out id))
+                {
                     break;
+                }
             }
 
             taken.Add(Cards[id - 1]);
         }
 
-        foreach (var card in taken)
+        foreach (WhiteCard card in taken)
         {
-            Cards.RemoveAll(x => x.ID == card.ID);
+            _ = Cards.RemoveAll(x => x.ID == card.ID);
         }
         return taken;
     }
 
-    override public int GetWinner(int answersNumber)
+    public override int GetWinner(int answersNumber)
     {
 
         int winner;
@@ -66,7 +68,7 @@ class HostPlayer : Player
         return winner;
     }
 
-    override public void NewRound(int round)
+    public override void NewRound(int round)
     {
         Console.Clear();
         Console.WriteLine($"====== Round {round} ======");
@@ -77,7 +79,7 @@ class HostPlayer : Player
         }
     }
 
-    override public void GameOver()
+    public override void GameOver()
     {
 
     }

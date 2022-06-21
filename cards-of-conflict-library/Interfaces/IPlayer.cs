@@ -2,7 +2,7 @@
 
 namespace CardsOfConflict.Library.Game;
 
-interface IPlayer
+internal interface IPlayer
 {
     void Notify(string text);
     void SendCards(IEnumerable<WhiteCard> cards);

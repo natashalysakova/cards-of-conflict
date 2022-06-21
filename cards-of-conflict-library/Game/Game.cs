@@ -33,7 +33,7 @@ namespace CardsOfConflict.Library.Game
             Console.WriteLine("Public Ip Copied to clipboard");
             Console.WriteLine("Starting Host");
 
-            string myPlayerName = String.Empty;
+            string myPlayerName = string.Empty;
 #if DEBUG
             maxPlayers = 2;
             myPlayerName = "Host";
@@ -93,7 +93,7 @@ namespace CardsOfConflict.Library.Game
             }
             else
             {
-                var selectedString = Console.ReadLine() ?? String.Empty;
+                var selectedString = Console.ReadLine() ?? string.Empty;
                 selected = selectedString.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
             }
 
@@ -157,7 +157,7 @@ namespace CardsOfConflict.Library.Game
             return game.JoinTheGame(ipAddress, port);
         }
 
-        void ServerGameLoop(Deck deck)
+        private void ServerGameLoop(Deck deck)
         {
             NotifyPlayers("===================================");
             NotifyPlayers("Everyone joined. Starting the Game!");
@@ -175,7 +175,10 @@ namespace CardsOfConflict.Library.Game
             for (int i = firstTsar; i <= maxPlayers; i++)
             {
                 if (i == maxPlayers)
+                {
                     i = 0;
+                }
+
                 Console.WriteLine($"Round {round++}");
                 NotifyNewRound(round);
 
@@ -283,14 +286,11 @@ namespace CardsOfConflict.Library.Game
             }
         }
 
-        IPlayer SetATsar(IPlayer player)
+        private IPlayer SetATsar(IPlayer player)
         {
             foreach (var p in players)
             {
-                if (p.Name == player.Name)
-                    p.IsTsar = true;
-                else
-                    p.IsTsar = false;
+                p.IsTsar = p.Name == player.Name;
             }
             return player;
         }
@@ -303,10 +303,14 @@ namespace CardsOfConflict.Library.Game
             }
 
             if (game != null)
+            {
                 game.Dispose();
+            }
 
             if (server != null)
+            {
                 server.Stop();
+            }
         }
     }
 }

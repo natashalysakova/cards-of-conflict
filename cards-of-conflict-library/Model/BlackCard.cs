@@ -2,7 +2,7 @@
 namespace CardsOfConflict.Library.Model;
 
 [Serializable]
-class BlackCard : Card
+internal class BlackCard : Card
 {
     public BlackCard(string text) : base(text)
     {

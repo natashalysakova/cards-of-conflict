@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using CardsOfConflict.Library.Extentions;
+using CardsOfConflict.Library.Interfaces;
 using CardsOfConflict.Library.Model;
 
 namespace CardsOfConflict.Library.Game
@@ -76,7 +77,7 @@ namespace CardsOfConflict.Library.Game
                 if (!popped)
                 {
                     whiteStack = usedWhiteCards.ShuffleIntoStack();
-                    result = whiteStack.Pop();
+                    whiteStack.TryPop(out result);
                 }
                 if(result != null)
                     list.Add(result);
@@ -89,6 +90,9 @@ namespace CardsOfConflict.Library.Game
         {
             whiteCards.AddRange(ReadDeck<WhiteCard>($"Decks/{deckName}/white.json"));
             blackCards.AddRange(ReadDeck<BlackCard>($"Decks/{deckName}/black.json"));
+
+            fillIds(whiteCards);
+            fillIds(blackCards);
 
             Shuffle();
         }
@@ -113,6 +117,20 @@ namespace CardsOfConflict.Library.Game
                 Console.WriteLine($"Cannot deserialize deck from {path} : {ex.Message}");
                 throw;
             }
+<<<<<<< HEAD
+=======
+        }
+
+        private static void fillIds(IEnumerable<ICard> cards)
+        {
+            foreach (var card in cards)
+            {
+                if(card.ID == default)
+                {
+                    card.SetNewId();
+                }
+            }
+>>>>>>> 17ece98 (full refactoring)
         }
     }
 }

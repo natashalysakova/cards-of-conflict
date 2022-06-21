@@ -6,7 +6,7 @@ namespace CardsOfConflict.Library.Game
 {
     public class NormalGame : IDisposable
     {
-        readonly MessageManager messageManager = new(new TcpClient());
+        private readonly MessageManager messageManager = new(new TcpClient());
 
         public void Dispose()
         {
@@ -36,7 +36,7 @@ namespace CardsOfConflict.Library.Game
 
         }
 
-        int GameLoop()
+        private int GameLoop()
         {
 
             var isGameActive = true;
@@ -44,7 +44,7 @@ namespace CardsOfConflict.Library.Game
 
             while (isGameActive)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(200);
 
                 var nexMessage = messageManager.GetNextMessage();
                 switch (nexMessage.Type)
@@ -64,7 +64,9 @@ namespace CardsOfConflict.Library.Game
                             {
                                 Console.WriteLine($"Select answer #{i + 1}:");
                                 if (int.TryParse(Console.ReadLine(), out id))
+                                {
                                     break;
+                                }
                             }
 
 

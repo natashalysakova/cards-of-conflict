@@ -2,7 +2,7 @@
 namespace CardsOfConflict.Library.Model;
 
 [Serializable]
-class WhiteCard : Card
+internal class WhiteCard : Card
 {
     public WhiteCard(string text) : base(text) { }
 
