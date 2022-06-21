@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1700.2
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cards-of-conflict-console", "cards-of-conflict-console\cards-of-conflict-console.csproj", "{5ECAD90C-123D-49B1-957E-C6FA9EAF58FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cards-of-conflict-console", "cards-of-conflict-console\cards-of-conflict-console.csproj", "{5ECAD90C-123D-49B1-957E-C6FA9EAF58FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardsOfConflict.Library", "cards-of-conflict-library\CardsOfConflict.Library.csproj", "{6400F1AA-F0A8-490C-A94D-8FE666FEDFB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardsOfConflict.Library", "cards-of-conflict-library\CardsOfConflict.Library.csproj", "{6400F1AA-F0A8-490C-A94D-8FE666FEDFB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardsOfConflict.Windows", "CardsOfConflict.Windows\CardsOfConflict.Windows.csproj", "{FE7E0038-9BA6-411B-826D-8D055CAFCBCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{6400F1AA-F0A8-490C-A94D-8FE666FEDFB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6400F1AA-F0A8-490C-A94D-8FE666FEDFB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6400F1AA-F0A8-490C-A94D-8FE666FEDFB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE7E0038-9BA6-411B-826D-8D055CAFCBCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE7E0038-9BA6-411B-826D-8D055CAFCBCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE7E0038-9BA6-411B-826D-8D055CAFCBCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE7E0038-9BA6-411B-826D-8D055CAFCBCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
