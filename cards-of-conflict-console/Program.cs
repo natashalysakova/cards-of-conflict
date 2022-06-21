@@ -29,7 +29,7 @@ namespace CardsOfConflictGame
                     case ConsoleKey.D2:
                         var game = new Game();
                         _ = game.JoinTheGame();
-                        game.Dispose();
+                        ((IDisposable)game).Dispose();
                         break;
                     case ConsoleKey.D3:
                         isExit = true;

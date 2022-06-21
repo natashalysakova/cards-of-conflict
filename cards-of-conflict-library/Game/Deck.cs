@@ -10,10 +10,10 @@ namespace CardsOfConflict.Library.Game
         Stack<BlackCard> blackStack;
         Stack<WhiteCard> whiteStack;
 
-        List<BlackCard> blackCards;
-        List<WhiteCard> whiteCards;
-        List<BlackCard> usedBlackCards;
-        List<WhiteCard> usedWhiteCards;
+        readonly List<BlackCard> blackCards;
+        readonly List<WhiteCard> whiteCards;
+        readonly List<BlackCard> usedBlackCards;
+        readonly List<WhiteCard> usedWhiteCards;
 
         internal Stack<BlackCard> BlackCards { get => blackStack; }
         internal Stack<WhiteCard> WhiteCards { get => whiteStack; }
@@ -37,15 +37,18 @@ namespace CardsOfConflict.Library.Game
 
         public BlackCard TakeBlackCard()
         {
-            BlackCard result;
-            blackStack.TryPop(out result);
+            var popped = blackStack.TryPop(out BlackCard? result);
 
-            if (result is null)
+            if (!popped)
             {
                 blackStack = usedBlackCards.ShuffleIntoStack();
                 result = blackStack.Pop();
             }
-            return result;
+
+            if (result != null)       
+                return result;
+
+            throw new NullReferenceException("Cannot get black card from stack");
         }
 
         public void ReturnBlackCard(BlackCard card)
@@ -69,15 +72,16 @@ namespace CardsOfConflict.Library.Game
             var list = new List<WhiteCard>();
             for (int i = 0; i < count; i++)
             {
-                WhiteCard result;
-                whiteStack.TryPop(out result);
-                if (result is null)
+                var popped = whiteStack.TryPop(out WhiteCard? result);
+                if (!popped)
                 {
                     whiteStack = usedWhiteCards.ShuffleIntoStack();
                     result = whiteStack.Pop();
                 }
-                list.Add(result);
+                if(result != null)
+                    list.Add(result);
             }
+
             return list;
         }
 
@@ -89,7 +93,7 @@ namespace CardsOfConflict.Library.Game
             Shuffle();
         }
 
-        private IEnumerable<T> ReadDeck<T>(string path)
+        private static IEnumerable<T> ReadDeck<T>(string path)
         {
             string json;
             using (var s = new StreamReader(File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path))))
@@ -97,7 +101,18 @@ namespace CardsOfConflict.Library.Game
                 json = s.ReadToEnd();
             }
 
-            return JsonSerializer.Deserialize<IEnumerable<T>>(json);
+            try
+            {
+                var cards = JsonSerializer.Deserialize<IEnumerable<T>>(json);
+                if (cards is null)
+                    throw new NullReferenceException("cards is null");
+                return cards;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Cannot deserialize deck from {path} : {ex.Message}");
+                throw;
+            }
         }
     }
 }

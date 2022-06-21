@@ -1,6 +1,4 @@
 ﻿using System.Net.Sockets;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using CardsOfConflict.Library.Extentions;
 using CardsOfConflict.Library.Helpers;
 using CardsOfConflict.Library.Model;
@@ -10,16 +8,11 @@ namespace CardsOfConflict.Library.Game
 
     public class Game : IDisposable
     {
-        public Game()
-        {
-            players = new List<Player>();
-        }
-
-        const int port = 2022;
-        List<Player> players;
-        int maxPlayers;
-        TcpListener server;
-        NormalGame game;
+        private const int port = 2022;
+        private readonly List<IPlayer> players = new();
+        private int maxPlayers;
+        private TcpListener? server;
+        private NormalGame? game;
 
 
         private void NotifyPlayers(string message)
@@ -63,7 +56,7 @@ namespace CardsOfConflict.Library.Game
         Console.WriteLine("Enter your name");
         myPlayerName = Console.ReadLine();
 #endif
-            players.Add(new Player(myPlayerName));
+            players.Add(new HostPlayer(myPlayerName));
             server = new TcpListener(localIp, port);
             server.Start();
 
@@ -76,8 +69,8 @@ namespace CardsOfConflict.Library.Game
                 messageMamager.RequestName();
                 var data = messageMamager.GetNextMessage();
 
-                var playerName = data.Text;
-                players.Add(new Player(playerName, messageMamager));
+                var playerName = data.Text ?? $"player{players.Count + 1}";
+                players.Add(new RemotePlayer(playerName, messageMamager));
                 NotifyPlayers($"{playerName} joined the game");
             }
 
@@ -93,14 +86,15 @@ namespace CardsOfConflict.Library.Game
                 Console.WriteLine($"{i + 1} {availableDecks.ElementAt(i)}");
             }
 
-            IEnumerable<int> selected = new List<int>();
+            var selected = new List<int>();
             if (availableDecks.Count() == 1)
             {
-                selected.Append(1);
+                selected.Add(1);
             }
             else
             {
-                selected = Console.ReadLine().Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x));
+                var selectedString = Console.ReadLine() ?? String.Empty;
+                selected = selectedString.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
             }
 
             Console.WriteLine("Selected decks: ");
@@ -108,8 +102,9 @@ namespace CardsOfConflict.Library.Game
 
             if (!selected.Any())
             {
-                selected.Append(1);
+                selected.Add(1);
             }
+
             foreach (var i in selected)
             {
                 var deckName = availableDecks.ElementAt(i - 1);
@@ -126,47 +121,15 @@ namespace CardsOfConflict.Library.Game
             server.Stop();
         }
 
-        private IEnumerable<string> GetDeckList()
+        private static IEnumerable<string> GetDeckList()
         {
             var path = Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Decks"));
             foreach (var item in path)
             {
-                DirectoryInfo info = new DirectoryInfo(item);
+                var info = new DirectoryInfo(item);
                 yield return info.Name;
             }
         }
-
-        //public void ReadFromFile()
-        //{
-        //    List<WhiteCard> whiteCards = new List<WhiteCard>();
-        //    List<BlackCard> blackCards = new List<BlackCard>();
-
-        //    using (var sr = new StreamReader(File.OpenRead("Decks/Main Game/whiteList.txt")))
-        //    {
-        //        var str = sr.ReadToEnd();
-
-        //        whiteCards.AddRange(str.Split(Environment.NewLine).Select(x => new WhiteCard(x)));
-        //    }
-
-        //    using (var sr = new StreamReader(File.OpenRead("Decks/Main Game/blackList.txt")))
-        //    {
-        //        var str = sr.ReadToEnd();
-
-        //        blackCards.AddRange(str.Split(Environment.NewLine).Select(x => new BlackCard(x)));
-        //    }
-
-        //    var str3 = JsonSerializer.Serialize(blackCards);
-        //    using (var s = new StreamWriter(File.OpenWrite("black.json")))
-        //    {
-        //        s.WriteLine(str3);
-        //    }
-
-        //    var str2 = JsonSerializer.Serialize(whiteCards);
-        //    using (var s = new StreamWriter(File.OpenWrite("white.json")))
-        //    {
-        //        s.WriteLine(str2);
-        //    }
-        //}
 
         public int JoinTheGame()
         {
@@ -200,11 +163,7 @@ namespace CardsOfConflict.Library.Game
             NotifyPlayers("Everyone joined. Starting the Game!");
             NotifyPlayers("===================================");
 
-
-
-            var isGameActive = true;
             var firstTsar = new Random().Next(maxPlayers);
-
 
             var round = 0;
             foreach (var player in players)
@@ -229,7 +188,7 @@ namespace CardsOfConflict.Library.Game
                 var card = deck.TakeBlackCard();
                 NotifyPlayers($"[ROUND CARD] {card.Text}");
 
-                var answers = new Dictionary<Player, IEnumerable<WhiteCard>>();
+                var answers = new Dictionary<IPlayer, IEnumerable<WhiteCard>>();
                 var tasks = new List<Task>();
 
                 NotifyPlayers("===================================");
@@ -271,7 +230,7 @@ namespace CardsOfConflict.Library.Game
                 var winnerNumber = tsar.GetWinner(answers.Count);
 
                 var winnerPlayer = shuffledPlayers.ElementAt(winnerNumber - 1);
-                winnerPlayer.AddWinPoint();
+                winnerPlayer.AddPoint();
                 NotifyPlayers($"And the point goes to {winnerPlayer.Name}");
 
                 deck.ReturnBlackCard(card);
@@ -293,7 +252,6 @@ namespace CardsOfConflict.Library.Game
                 if (key.Key == ConsoleKey.Escape)
                 {
                     var winner = players.Where(x => x.Points == players.Max(x => x.Points));
-                    isGameActive = false;
                     NotifyPlayers("===================================");
                     NotifyPlayers($"GAME IS OVER");
                     foreach (var player in winner)
@@ -325,7 +283,7 @@ namespace CardsOfConflict.Library.Game
             }
         }
 
-        Player SetATsar(Player player)
+        IPlayer SetATsar(IPlayer player)
         {
             foreach (var p in players)
             {
@@ -339,7 +297,6 @@ namespace CardsOfConflict.Library.Game
 
         public void Dispose()
         {
-
             foreach (var player in players)
             {
                 player.Stop();

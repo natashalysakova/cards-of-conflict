@@ -1,7 +1,6 @@
-﻿namespace CardsOfConflict.Library.Enums
+﻿namespace CardsOfConflict.Library.Enums;
+
+enum CardType
 {
-    enum CardType
-    {
-        Black, White
-    }
+    Black, White
 }

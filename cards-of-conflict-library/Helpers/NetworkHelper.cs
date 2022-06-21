@@ -1,28 +1,31 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-namespace CardsOfConflict.Library.Helpers
+namespace CardsOfConflict.Library.Helpers;
+
+class NetworkHelper
 {
-    class NetworkHelper
+    public static IPAddress GetLocalIPAddress()
     {
-        public static IPAddress GetLocalIPAddress()
-        {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
+        var host = Dns.GetHostEntry(Dns.GetHostName());
 
-            foreach (var ip in host.AddressList)
+        foreach (var ip in host.AddressList)
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString() != "127.0.0.1")
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString() != "127.0.0.1")
-                {
-                    return ip;
-                }
+                return ip;
             }
-
-            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
-        public static string GetPublicIpAddress()
-        {
-            string externalIpString = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
-            return IPAddress.Parse(externalIpString).ToString();
-        }
+        throw new Exception("No network adapters with an IPv4 address in the system!");
+    }
+
+    public static string GetPublicIpAddress()
+    {
+        var externalIpString = new HttpClient()
+            .GetStringAsync("http://icanhazip.com").Result
+            .Replace("\\r\\n", "")
+            .Replace("\\n", "")
+            .Trim();
+        return IPAddress.Parse(externalIpString).ToString();
     }
 }
