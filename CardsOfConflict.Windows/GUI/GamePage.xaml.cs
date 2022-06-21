@@ -1,5 +1,4 @@
-﻿using CardsOfConflict.Windows.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,15 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CardsOfConflict.Windows
+namespace CardsOfConflict.Windows.GUI
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for GamePage.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class GamePage : Page
     {
-        public MainWindow()
-        { 
+        public GamePage()
+        {
             InitializeComponent();
         }
     }
