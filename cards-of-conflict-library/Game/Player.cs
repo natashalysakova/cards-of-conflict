@@ -2,13 +2,15 @@
 
 namespace CardsOfConflict.Library.Game;
 
-internal abstract class Player : IPlayer
-{
-    public Player(string name)
+    public abstract class Player : IPlayer
     {
-        Name = name;
-        Cards = new List<WhiteCard>();
-    }
+        //public Player(string name, TcpClient client) : this (name, new MessageManager(client)) { }
+
+        public Player(string name)
+        {
+            Name = name;
+            Cards = new List<WhiteCard>();
+        }
 
     public string Name { get; }
     public int Points { get; private set; }

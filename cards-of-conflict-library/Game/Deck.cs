@@ -6,7 +6,7 @@ using CardsOfConflict.Library.Model;
 namespace CardsOfConflict.Library.Game
 {
     [Serializable]
-    class Deck
+    public class Deck
     {
         Stack<BlackCard> blackStack;
         Stack<WhiteCard> whiteStack;
@@ -127,6 +127,16 @@ namespace CardsOfConflict.Library.Game
                 {
                     card.SetNewId();
                 }
+            }
+        }
+
+        public  static IEnumerable<string> GetDeckList()
+        {
+            var path = Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Decks"));
+            foreach (var item in path)
+            {
+                DirectoryInfo info = new DirectoryInfo(item);
+                yield return info.Name;
             }
         }
     }

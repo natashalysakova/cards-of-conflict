@@ -1,14 +1,16 @@
 ﻿using CardsOfConflict.Library.Enums;
 namespace CardsOfConflict.Library.Model;
 
-[Serializable]
-public class BlackCard : Card
+namespace CardsOfConflict.Library.Model
 {
-    public BlackCard(string text) : base(text)
+    [Serializable]
+    public class BlackCard : Card
     {
-        var answers = text.Count(x => x == '_');
-        AnswersNumber = answers == 0 ? 1 : answers;
-    }
+        public BlackCard(string text) : base(text)
+        {
+            var answers = text.Count(x => x == '_');
+            AnswersNumber = answers == 0 ? 1 : answers;
+        }
 
     public int AnswersNumber { get; set; }
     public override CardType Type => CardType.Black;

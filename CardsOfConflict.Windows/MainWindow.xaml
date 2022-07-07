@@ -8,8 +8,6 @@
         xmlns:vm="clr-namespace:CardsOfConflict.Windows.ViewModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" d:DataContext="{d:DesignInstance Type=vm:GameViewModel, IsDesignTimeCreatable=True}">
-    <Window.DataContext>
-        <vm:GameViewModel/>
-    </Window.DataContext>
-    <Frame Content="{Binding OpenPage}"></Frame>
+    
+    <Frame NavigationUIVisibility="Hidden" Content="{Binding ActivePage}"></Frame>
 </Window>
