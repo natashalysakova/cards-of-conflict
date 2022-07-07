@@ -139,5 +139,15 @@ namespace CardsOfConflict.Library.Game
                 yield return info.Name;
             }
         }
+
+        public  static IEnumerable<string> GetDeckList()
+        {
+            var path = Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Decks"));
+            foreach (var item in path)
+            {
+                DirectoryInfo info = new DirectoryInfo(item);
+                yield return info.Name;
+            }
+        }
     }
 }
