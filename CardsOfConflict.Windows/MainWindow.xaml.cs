@@ -21,9 +21,12 @@ namespace CardsOfConflict.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
-        { 
+        private readonly GameViewModel model;
+
+        public MainWindow(GameViewModel model)
+        {
             InitializeComponent();
+            this.model = model;
         }
     }
 }

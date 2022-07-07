@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CardsOfConflict.Library.Game;
+using CardsOfConflict.Windows.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +22,17 @@ namespace CardsOfConflict.Windows.GUI
     /// </summary>
     public partial class HostPage : Page
     {
-        public HostPage()
+        private GameViewModel model { get => DataContext as GameViewModel; }
+
+        public HostPage(GameViewModel model)
         {
+            DataContext = model;
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            model.HostNewGame();
         }
     }
 }

@@ -5,10 +5,60 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CardsOfConflict.Windows.GUI"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="800" d:Background="White"
       Title="HostPage">
 
     <Grid>
-        <TextBlock Text="HostPage"></TextBlock>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="Settings"/>
+        
+        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" Text="Ip address" Padding="0,0,10,0"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="24" Text="{Binding Network.ExternalIp}" Padding="10,0,0,0"/>
+        
+        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" Text="Local address" Padding="0,0,10,0"/>
+        <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="24" Text="{Binding Network.LocalIp}" Padding="10,0,0,0"/>
+        
+        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" Text="Port" Padding="0,0,10,0"/>
+        <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="24" Text="{Binding Network.Port}" Padding="10,0,0,0"/>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" Text="Max Players" Padding="0,0,10,0"/>
+        <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="24" Text="{Binding MaxPlayers}" Padding="10,0,0,0"/>
+
+        <TextBlock Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24" Text="Player Name" Padding="0,0,10,0"/>
+        <TextBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="24" Text="{Binding PlayerName}" Padding="10,0,0,0"/>
+
+        <Grid Grid.Row="6" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="Decks"/>
+            <ListView Grid.Row="1" ItemsSource="{Binding DeckList}"></ListView>
+        </Grid>
+        
+        <Grid Grid.Row="6" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="Lobby"/>
+            <ListBox Grid.Row="1" ItemsSource="{Binding Players}"></ListBox>
+        </Grid>
+        <Button Grid.Column="0" Grid.Row="7" Content="Back"></Button>
+        <Button Grid.Column="1" Grid.Row="7" Content="Run" Click="Button_Click"></Button>
     </Grid>
 </Page>

@@ -5,7 +5,7 @@ using CardsOfConflict.Library.Model;
 namespace CardsOfConflict.Library.Game
 {
 
-    class Player
+    public class Player
     {
         //public Player(string name, TcpClient client) : this (name, new MessageManager(client)) { }
 

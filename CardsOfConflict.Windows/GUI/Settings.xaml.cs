@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CardsOfConflict.Windows.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,8 +21,11 @@ namespace CardsOfConflict.Windows.GUI
     /// </summary>
     public partial class Settings : Page
     {
-        public Settings()
+        private GameViewModel model { get => DataContext as GameViewModel; }
+
+        public Settings(GameViewModel model)
         {
+            DataContext = model;
             InitializeComponent();
         }
     }

@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 namespace CardsOfConflict.Library.Helpers
 {
-    class NetworkHelper
+    public class NetworkHelper
     {
         public static IPAddress GetLocalIPAddress()
         {
@@ -19,10 +19,10 @@ namespace CardsOfConflict.Library.Helpers
             throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
-        public static string GetPublicIpAddress()
+        public static IPAddress GetPublicIpAddress()
         {
             string externalIpString = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
-            return IPAddress.Parse(externalIpString).ToString();
+            return IPAddress.Parse(externalIpString);
         }
     }
 }

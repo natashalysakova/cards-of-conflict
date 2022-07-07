@@ -4,7 +4,7 @@ using CardsOfConflict.Library.Interfaces;
 namespace CardsOfConflict.Library.Model
 {
     [Serializable]
-    abstract class Card : ICard
+    public abstract class Card : ICard
     {
         public Card(string text)
         {

@@ -3,7 +3,7 @@
 namespace CardsOfConflict.Library.Model
 {
     [Serializable]
-    class BlackCard : Card
+    public class BlackCard : Card
     {
         public BlackCard(string text) : base(text)
         {

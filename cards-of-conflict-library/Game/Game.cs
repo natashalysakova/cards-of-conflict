@@ -1,4 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using System.Collections.ObjectModel;
+using System.Net;
+using System.Net.Sockets;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CardsOfConflict.Library.Extentions;
@@ -10,13 +12,18 @@ namespace CardsOfConflict.Library.Game
 
     public class Game : IDisposable
     {
+        ObservableCollection<Player> players;
+        public Game(ObservableCollection<Player> players)
+        {
+            this.players = players;
+        }
         public Game()
         {
-            players = new List<Player>();
+            this.players = new ObservableCollection<Player>();
         }
 
         const int port = 2022;
-        List<Player> players;
+        
         int maxPlayers;
         TcpListener server;
         NormalGame game;
@@ -32,13 +39,8 @@ namespace CardsOfConflict.Library.Game
 
         public void HostNewGame()
         {
-
             var externalIp = NetworkHelper.GetPublicIpAddress();
             var localIp = NetworkHelper.GetLocalIPAddress();
-            Console.WriteLine($"Your local ip: {localIp}:{port}");
-            Console.WriteLine($"Your public ip: {externalIp}:{port}");
-            Console.WriteLine("Public Ip Copied to clipboard");
-            Console.WriteLine("Starting Host");
 
             string myPlayerName = String.Empty;
 #if DEBUG
@@ -63,30 +65,9 @@ namespace CardsOfConflict.Library.Game
         Console.WriteLine("Enter your name");
         myPlayerName = Console.ReadLine();
 #endif
-            players.Add(new Player(myPlayerName));
-            server = new TcpListener(localIp, port);
-            server.Start();
-
-            while (players.Count < maxPlayers)
-            {
-                NotifyPlayers("Waiting for players");
-
-                var client = server.AcceptTcpClient();
-                var messageMamager = new MessageManager(client);
-                messageMamager.RequestName();
-                var data = messageMamager.GetNextMessage();
-
-                var playerName = data.Text;
-                players.Add(new Player(playerName, messageMamager));
-                NotifyPlayers($"{playerName} joined the game");
-            }
-
-            Console.WriteLine($"{players.Count} joined.");
-
-
             Console.WriteLine("Select Deck (use coma to separate few decks):");
 
-            var availableDecks = GetDeckList();
+            var availableDecks = Deck.GetDeckList();
 
             for (int i = 0; i < availableDecks.Count(); i++)
             {
@@ -117,6 +98,42 @@ namespace CardsOfConflict.Library.Game
                 deck.AddCards(deckName);
             }
 
+            HostNewGame(localIp, externalIp, maxPlayers, myPlayerName, deck);
+        }
+
+        public void HostNewGame(IPAddress localIp, IPAddress externalIp, int maxPlayers, string myplayerName, Deck deck)
+        {
+
+            
+            Console.WriteLine($"Your local ip: {localIp}:{port}");
+            Console.WriteLine($"Your public ip: {externalIp}:{port}");
+            Console.WriteLine("Public Ip Copied to clipboard");
+            Console.WriteLine("Starting Host");
+
+            
+            players.Add(new Player(myplayerName));
+            server = new TcpListener(localIp, port);
+            server.Start();
+
+            while (players.Count < maxPlayers)
+            {
+                NotifyPlayers("Waiting for players");
+
+                var client = server.AcceptTcpClient();
+                var messageMamager = new MessageManager(client);
+                messageMamager.RequestName();
+                var data = messageMamager.GetNextMessage();
+
+                var playerName = data.Text;
+                players.Add(new Player(playerName, messageMamager));
+                NotifyPlayers($"{playerName} joined the game");
+            }
+
+            Console.WriteLine($"{players.Count} joined.");
+
+
+
+
 
 
 
@@ -126,15 +143,7 @@ namespace CardsOfConflict.Library.Game
             server.Stop();
         }
 
-        private IEnumerable<string> GetDeckList()
-        {
-            var path = Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Decks"));
-            foreach (var item in path)
-            {
-                DirectoryInfo info = new DirectoryInfo(item);
-                yield return info.Name;
-            }
-        }
+        
 
         //public void ReadFromFile()
         //{
