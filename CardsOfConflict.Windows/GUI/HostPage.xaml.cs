@@ -1,19 +1,7 @@
-﻿using CardsOfConflict.Library.Game;
-using CardsOfConflict.Windows.ViewModel;
-using System;
-using System.Collections.Generic;
+﻿using CardsOfConflict.Windows.ViewModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CardsOfConflict.Windows.GUI
 {
@@ -32,7 +20,28 @@ namespace CardsOfConflict.Windows.GUI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            model.HostNewGame();
+            if (model.LobbyStarted)
+            {
+                model.AbortGame();
+            }
+            else
+            {
+                if (model.DeckList.Any(x => x.Enabled))
+                    model.HostNewGame();
+                else
+                    model.Info = "No Deck Selected";
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (model.LobbyStarted)
+            {
+                model.AbortGame();
+            }
+
+            model.Back();
+
         }
     }
 }

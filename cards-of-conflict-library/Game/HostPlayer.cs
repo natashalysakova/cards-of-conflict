@@ -1,16 +1,17 @@
-﻿using CardsOfConflict.Library.Model;
+﻿using CardsOfConflict.Library.Extentions;
+using CardsOfConflict.Library.Model;
 
 namespace CardsOfConflict.Library.Game;
 
-internal class HostPlayer : Player
+public class HostPlayer : Player
 {
-    public HostPlayer(string name) : base (name)
+    public HostPlayer(string name) : base(name)
     {
     }
 
     public override void Notify(string text)
     {
-        Console.WriteLine(text);
+        Info = text;
     }
 
     public override void SendCards(IEnumerable<WhiteCard> cards)
@@ -40,7 +41,7 @@ internal class HostPlayer : Player
 
         foreach (WhiteCard card in taken)
         {
-            _ = Cards.RemoveAll(x => x.ID == card.ID);
+            Cards.RemoveAll(x => x.ID == card.ID);
         }
         return taken;
     }
@@ -70,9 +71,9 @@ internal class HostPlayer : Player
 
     public override void NewRound(int round)
     {
-        Console.Clear();
-        Console.WriteLine($"====== Round {round} ======");
-        Console.WriteLine("My Cards");
+        //Console.Clear();
+        //Console.WriteLine($"====== Round {round} ======");
+        //Console.WriteLine("My Cards");
         for (int i = 0; i < Cards.Count; i++)
         {
             Console.WriteLine($"{i + 1}. {Cards[i]}");
@@ -86,6 +87,6 @@ internal class HostPlayer : Player
 
     public override void Stop()
     {
-        
+
     }
 }

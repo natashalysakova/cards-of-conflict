@@ -3,12 +3,53 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:localc="clr-namespace:CardsOfConflict.Windows.GUI.Controls"
       xmlns:local="clr-namespace:CardsOfConflict.Windows.GUI"
+      xmlns:vm ="clr-namespace:CardsOfConflict.Windows.ViewModel"
+      xmlns:m="clr-namespace:CardsOfConflict.Library.Model;assembly=CardsOfConflict.Library"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="800" d:Background="White"
       Title="GamePage">
-
     <Grid>
-        <TextBlock Text="GamePage"></TextBlock>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="250"/>
+        </Grid.RowDefinitions>
+        <ListView 
+            Grid.Row="0" Grid.Column="1" 
+            ItemsSource="{Binding OtherPlayers}" d:ItemsSource="{d:SampleData}" >
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"></StackPanel>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" Padding="10"></TextBlock>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        <ItemsControl Grid.Row="2" Grid.Column="1" 
+                  ItemsSource="{Binding LocalPlayer.Cards}" d:ItemsSource="{d:SampleData ItemCount=10}" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" ></StackPanel>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type m:WhiteCard}">
+                    <localc:WhiteCardControl></localc:WhiteCardControl>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </Page>

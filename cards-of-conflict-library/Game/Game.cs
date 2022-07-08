@@ -1,27 +1,29 @@
-﻿using System.Collections.ObjectModel;
-using System.Net;
-using System.Net.Sockets;
-using CardsOfConflict.Library.Extentions;
+﻿using CardsOfConflict.Library.Extentions;
 using CardsOfConflict.Library.Helpers;
 using CardsOfConflict.Library.Model;
+using System.Collections.ObjectModel;
+using System.Net;
+using System.Net.Sockets;
 
 namespace CardsOfConflict.Library.Game
 {
 
     public class Game : IDisposable
     {
-        ObservableCollection<Player> players;
-        public Game(ObservableCollection<Player> players)
+        ObservableCollection<IPlayer> players;
+        CancellationTokenSource cancellationTokenSource;
+        public event EventHandler<EventArgs> GameStarted;
+
+        public Game(ObservableCollection<IPlayer> players)
         {
             this.players = players;
         }
-        public Game()
+        public Game() : this(new ObservableCollection<IPlayer>())
         {
-            this.players = new ObservableCollection<Player>();
         }
 
         const int port = 2022;
-        
+
         int maxPlayers;
         TcpListener server;
         NormalGame game;
@@ -96,21 +98,25 @@ namespace CardsOfConflict.Library.Game
                 Console.WriteLine($"{deckName}");
                 deck.AddCards(deckName);
             }
-
-            HostNewGame(localIp, externalIp, maxPlayers, myPlayerName, deck);
+            HostNewGame(localIp, externalIp, maxPlayers, new HostPlayer(myPlayerName), deck, new CancellationTokenSource());
         }
 
-        public void HostNewGame(IPAddress localIp, IPAddress externalIp, int maxPlayers, string myplayerName, Deck deck)
+        public void Abort()
         {
+            cancellationTokenSource.Cancel();
+            players.Clear();
+        }
 
-            
-            Console.WriteLine($"Your local ip: {localIp}:{port}");
-            Console.WriteLine($"Your public ip: {externalIp}:{port}");
-            Console.WriteLine("Public Ip Copied to clipboard");
-            Console.WriteLine("Starting Host");
+        public async void HostNewGame(IPAddress localIp, IPAddress externalIp, int maxPlayers, IPlayer player, Deck deck, CancellationTokenSource cancellationToken)
+        {
+            this.cancellationTokenSource = cancellationToken;
 
-            
-            players.Add(new HostPlayer(myplayerName));
+            player.Info = $"Your local ip: {localIp}:{port}";
+            player.Info = $"Your public ip: {externalIp}:{port}";
+            player.Info = "Public Ip Copied to clipboard";
+            player.Info = "Starting Host";
+
+            players.Add(player);
             server = new TcpListener(localIp, port);
             server.Start();
 
@@ -118,23 +124,33 @@ namespace CardsOfConflict.Library.Game
             {
                 NotifyPlayers("Waiting for players");
 
-                var client = server.AcceptTcpClient();
-                var messageMamager = new MessageManager(client);
-                messageMamager.RequestName();
-                var data = messageMamager.GetNextMessage();
+                var client = server.AcceptTcpClientAsync(cancellationToken.Token);
+              
+                try
+                {
+                    var messageMamager = new MessageManager(client.Result);
+                    messageMamager.RequestName();
+                    var data = messageMamager.GetNextMessage();
 
-                var playerName = data.Text;
-                players.Add(new RemotePlayer(playerName, messageMamager));
-                NotifyPlayers($"{playerName} joined the game");
+                    var playerName = data.Text;
+                    players.Add(new RemotePlayer(playerName, messageMamager));
+                    NotifyPlayers($"{playerName} joined the game");
+                }
+                catch (Exception)
+                {
+                    if (client.IsCanceled)
+                    {
+                        player.Info = $"game was cancelled";
+                        server.Stop();
+                        return;
+                    }
+                }
             }
 
-            Console.WriteLine($"{players.Count} joined.");
+            player.Info = $"{players.Count} joined.";
 
 
-
-
-
-
+            GameStarted?.Invoke(this, new EventArgs());
 
             ServerGameLoop(deck);
 
@@ -142,14 +158,14 @@ namespace CardsOfConflict.Library.Game
             server.Stop();
         }
 
-        
+
 
         public int JoinTheGame()
         {
 
             string ipAddress = string.Empty;
 #if DEBUG
-            ipAddress = "192.168.0.101";
+            ipAddress = NetworkHelper.GetLocalIPAddress().ToString();
 #else
         while (true)
         {

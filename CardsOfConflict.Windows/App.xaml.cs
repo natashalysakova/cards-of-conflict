@@ -1,12 +1,6 @@
 ﻿using CardsOfConflict.Windows.GUI;
 using CardsOfConflict.Windows.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace CardsOfConflict.Windows
@@ -31,7 +25,7 @@ namespace CardsOfConflict.Windows
         {
             //services.AddSingleton(new GameViewModel() { Origin = "service Provdier"});
             services.AddSingleton<MainWindow>();
-            services.AddSingleton<GameViewModel>(new GameViewModel() { Origin = "servieProvider" });
+            services.AddSingleton<GameViewModel>();
             services.AddScoped<ConnectPage>();
             services.AddScoped<HostPage>();
             services.AddScoped<GamePage>();

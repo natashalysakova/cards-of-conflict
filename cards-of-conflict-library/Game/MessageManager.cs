@@ -1,8 +1,7 @@
-﻿using System;
+﻿using CardsOfConflict.Library.Enums;
+using CardsOfConflict.Library.Model;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
-using CardsOfConflict.Library.Enums;
-using CardsOfConflict.Library.Model;
 
 namespace CardsOfConflict.Library.Game
 {
@@ -85,7 +84,7 @@ namespace CardsOfConflict.Library.Game
                     {
                         var data = ObjectToByteArray(message);
                         Client.GetStream().Write(data, 0, data.Length);
-                    }  
+                    }
                 }
 
 
@@ -125,7 +124,7 @@ namespace CardsOfConflict.Library.Game
                 stream.Read(bytes, 0, bytes.Length);
 
                 var message = ByteArrayToObject<Message>(bytes);
-                if(message != null)
+                if (message != null)
                 {
                     lock (locker)
                     {
@@ -141,7 +140,7 @@ namespace CardsOfConflict.Library.Game
             {
                 Attachment = cards
             };
-            
+
             SendMessage(message);
         }
 

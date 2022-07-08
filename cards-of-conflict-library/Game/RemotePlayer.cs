@@ -1,4 +1,5 @@
-﻿using CardsOfConflict.Library.Model;
+﻿using CardsOfConflict.Library.Extentions;
+using CardsOfConflict.Library.Model;
 
 namespace CardsOfConflict.Library.Game;
 
@@ -36,7 +37,7 @@ internal class RemotePlayer : Player
 
         foreach (var card in taken)
         {
-            _ = Cards.RemoveAll(x => x.ID == card.ID);
+            Cards.RemoveAll(x => x.ID == card.ID);
         }
         return taken;
     }

@@ -1,7 +1,7 @@
 ﻿using CardsOfConflict.Library.Enums;
 namespace CardsOfConflict.Library.Interfaces;
 
-internal interface ICard
+public interface ICard
 {
     CardType Type { get; }
     string Text { get; set; }

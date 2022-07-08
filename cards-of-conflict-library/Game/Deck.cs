@@ -1,7 +1,7 @@
-﻿using System.Text.Json;
-using CardsOfConflict.Library.Extentions;
+﻿using CardsOfConflict.Library.Extentions;
 using CardsOfConflict.Library.Interfaces;
 using CardsOfConflict.Library.Model;
+using System.Text.Json;
 
 namespace CardsOfConflict.Library.Game
 {
@@ -46,7 +46,7 @@ namespace CardsOfConflict.Library.Game
                 result = blackStack.Pop();
             }
 
-            if (result != null)       
+            if (result != null)
                 return result;
 
             throw new NullReferenceException("Cannot get black card from stack");
@@ -79,7 +79,7 @@ namespace CardsOfConflict.Library.Game
                     whiteStack = usedWhiteCards.ShuffleIntoStack();
                     whiteStack.TryPop(out result);
                 }
-                if(result != null)
+                if (result != null)
                     list.Add(result);
             }
 
@@ -123,24 +123,14 @@ namespace CardsOfConflict.Library.Game
         {
             foreach (var card in cards)
             {
-                if(card.ID == default)
+                if (card.ID == default)
                 {
                     card.SetNewId();
                 }
             }
         }
 
-        public  static IEnumerable<string> GetDeckList()
-        {
-            var path = Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Decks"));
-            foreach (var item in path)
-            {
-                DirectoryInfo info = new DirectoryInfo(item);
-                yield return info.Name;
-            }
-        }
-
-        public  static IEnumerable<string> GetDeckList()
+        public static IEnumerable<string> GetDeckList()
         {
             var path = Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Decks"));
             foreach (var item in path)

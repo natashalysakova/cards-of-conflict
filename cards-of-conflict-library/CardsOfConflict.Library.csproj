@@ -28,7 +28,6 @@
     <Folder Include="Game\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Enums\" />
-    <Folder Include="Extentions\" />
     <Folder Include="Helpers\" />
     <Folder Include="Decks\Our Personal Deck\" />
   </ItemGroup>

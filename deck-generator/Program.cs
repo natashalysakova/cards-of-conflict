@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using CardsOfConflict.Library.Model;
+﻿using CardsOfConflict.Library.Model;
+using System.Text.Json;
 
 public class DeckGenerator
 {
@@ -56,7 +56,8 @@ public class DeckGenerator
             Directory.CreateDirectory(fullDir);
 
         var fullName = Path.Combine(fullDir, fileName);
-        using (var sw = new StreamWriter(fullName, new FileStreamOptions() {
+        using (var sw = new StreamWriter(fullName, new FileStreamOptions()
+        {
             Access = FileAccess.Write,
             Mode = FileMode.OpenOrCreate
         }))
@@ -66,7 +67,7 @@ public class DeckGenerator
         }
     }
 
-    public static List<T> GenerateCards<T>(string path, Func<string, T> del) where T: Card
+    public static List<T> GenerateCards<T>(string path, Func<string, T> del) where T : Card
     {
         var strings = ReadStringsFromFile(path);
 

@@ -1,6 +1,6 @@
-﻿using System.Net.Sockets;
-using CardsOfConflict.Library.Enums;
+﻿using CardsOfConflict.Library.Enums;
 using CardsOfConflict.Library.Model;
+using System.Net.Sockets;
 
 namespace CardsOfConflict.Library.Game
 {
@@ -70,7 +70,7 @@ namespace CardsOfConflict.Library.Game
                             }
 
 
-                            
+
                             cards.RemoveAt(id - 1);
                             messageManager.SendCards(cards[id - 1]);
                         }

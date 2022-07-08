@@ -7,7 +7,11 @@
         xmlns:gui="clr-namespace:CardsOfConflict.Windows.GUI"
         xmlns:vm="clr-namespace:CardsOfConflict.Windows.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" d:DataContext="{d:DesignInstance Type=vm:GameViewModel, IsDesignTimeCreatable=True}">
+        Title="MainWindow" MinHeight="600" MinWidth="1000" 
+        
+        d:DataContext="{d:DesignInstance Type=vm:GameViewModel, IsDesignTimeCreatable=True}" 
+        RenderOptions.ClearTypeHint="Enabled"
+        SizeChanged="Window_SizeChanged">
     
     <Frame NavigationUIVisibility="Hidden" Content="{Binding ActivePage}"></Frame>
 </Window>

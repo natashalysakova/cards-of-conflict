@@ -1,8 +1,9 @@
 ﻿using CardsOfConflict.Library.Model;
+using System.Collections.ObjectModel;
 
 namespace CardsOfConflict.Library.Game;
 
-internal interface IPlayer
+public interface IPlayer
 {
     void Notify(string text);
     void SendCards(IEnumerable<WhiteCard> cards);
@@ -19,5 +20,7 @@ internal interface IPlayer
     int Points { get; }
 
     bool IsTsar { get; set; }
-    List<WhiteCard> Cards { get; }
+    ObservableCollection<WhiteCard> Cards { get; }
+    string Info { get; set; }
+    event EventHandler InfoChanged;
 }
