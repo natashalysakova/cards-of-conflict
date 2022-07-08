@@ -1,5 +1,6 @@
 ﻿using CardsOfConflict.Library.Extentions;
 using CardsOfConflict.Library.Model;
+using System.Collections.ObjectModel;
 
 namespace CardsOfConflict.Library.Game;
 
@@ -88,5 +89,10 @@ public class HostPlayer : Player
     public override void Stop()
     {
 
+    }
+
+    public override void GameStarted(string[] players)
+    {
+        
     }
 }

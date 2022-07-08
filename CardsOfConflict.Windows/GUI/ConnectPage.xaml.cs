@@ -15,5 +15,15 @@ namespace CardsOfConflict.Windows.GUI
             DataContext = model;
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            model.GoBack();
+        }
+
+        private void Button_Click_1(object sender, System.Windows.RoutedEventArgs e)
+        {
+            model.JoinGame();
+        }
     }
 }

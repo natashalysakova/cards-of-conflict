@@ -12,5 +12,6 @@ public enum MessageType
     SendName = 6,
     RequestName = 7,
     NewRound = 8,
-    GameOver = 9
+    GameOver = 9,
+    GameStarted = 10
 }

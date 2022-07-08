@@ -40,8 +40,25 @@ namespace CardsOfConflict.Windows.GUI
                 model.AbortGame();
             }
 
-            model.Back();
+            model.GoBack();
 
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            if (sender is null)
+                return;
+            var button = sender as Button;
+            if (button is null)
+                return;
+
+            string ip = 
+                button.Tag.ToString() == "local" ? 
+                    model.Network.LocalIp.ToString() : 
+                    model.Network.ExternalIp.ToString();
+
+            Clipboard.SetText(ip);
+            model.Info = $"Copied {ip} in clipboard";
         }
     }
 }

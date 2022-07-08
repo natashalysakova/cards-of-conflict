@@ -1,6 +1,10 @@
 ﻿using CardsOfConflict.Library.Enums;
+using CardsOfConflict.Library.Extentions;
+using CardsOfConflict.Library.Interfaces;
 using CardsOfConflict.Library.Model;
+using System.Collections.ObjectModel;
 using System.Net.Sockets;
+using static CardsOfConflict.Library.Game.Game;
 
 namespace CardsOfConflict.Library.Game
 {
@@ -8,6 +12,18 @@ namespace CardsOfConflict.Library.Game
     {
         private readonly MessageManager messageManager = new(new TcpClient());
 
+        public delegate IEnumerable<int> RequestAnswersDelegate(int numberOfAnswers);
+        public delegate void MessageRecivedDelegate(string message);
+        public delegate int SelectWinnerDelegate(int numberOfPlayers);
+        public delegate void NextRoundDelegate(int round, IEnumerable<WhiteCard> cards);
+        public delegate void GameOverDelegate();
+
+        public event RequestAnswersDelegate RequestAnswers;
+        public event MessageRecivedDelegate MessageRecived;
+        public event SelectWinnerDelegate SelectWinner;
+        public event NextRoundDelegate NextRound;
+        public event GameOverDelegate GameOver;
+        public event GameStartedDelegate GameStarted;
         public void Dispose()
         {
             messageManager.Dispose();
@@ -15,12 +31,24 @@ namespace CardsOfConflict.Library.Game
 
         public int JoinTheGame(string ipAddress, int port)
         {
-            while (true)
+#if DEBUG
+            var myPlayerName = "player";
+#else
+                    Console.WriteLine("Enter your name: ");
+                    var myPlayerName = Console.ReadLine();
+#endif
+
+            return JoinTheGame(ipAddress, port, new HostPlayer(myPlayerName) , new CancellationTokenSource()); ;
+        }
+        public int JoinTheGame(string ipAddress, int port, IPlayer player,  CancellationTokenSource token)
+        {
+            while (!token.IsCancellationRequested)
             {
                 try
                 {
                     messageManager.Client.Connect(ipAddress, port);
                     Console.WriteLine("Connected");
+                    return GameLoop(player, token);
                 }
                 catch (Exception ex)
                 {
@@ -28,21 +56,15 @@ namespace CardsOfConflict.Library.Game
                     Console.WriteLine(ex.Message);
                     return -1;
                 }
-
-                return GameLoop();
             }
-
-
-
+            return -1;
         }
 
-        private int GameLoop()
+        private int GameLoop(IPlayer player, CancellationTokenSource token)
         {
 
-            var isGameActive = true;
-            var cards = new List<WhiteCard>();
-
-            while (isGameActive)
+            //var isGameActive = true;
+            while (!token.IsCancellationRequested)
             {
                 Thread.Sleep(200);
 
@@ -50,70 +72,36 @@ namespace CardsOfConflict.Library.Game
                 switch (nexMessage.Type)
                 {
                     case MessageType.SendCards:
-                        cards.AddRange(nexMessage.Attachment);
+                        player.Cards.AddRange(nexMessage.Attachment as IEnumerable<WhiteCard>);
 
                         break;
                     case MessageType.GetCards:
 
                         var number = nexMessage.CardNumber;
-                        Console.WriteLine($"Choose {number} answers");
-                        for (int i = 0; i < number; i++)
+
+                        var ids = RequestAnswers?.Invoke(number);
+
+                        foreach (var id in ids)
                         {
-                            int id;
-                            while (true)
-                            {
-                                Console.WriteLine($"Select answer #{i + 1}:");
-                                if (int.TryParse(Console.ReadLine(), out id))
-                                {
-                                    break;
-                                }
-                            }
-
-
-
-                            cards.RemoveAt(id - 1);
-                            messageManager.SendCards(cards[id - 1]);
+                            player.Cards.RemoveAt(id);
+                            messageManager.SendCards(player.Cards[id]);
                         }
 
                         break;
                     case MessageType.SendMessage:
                         var message = nexMessage.Text;
-                        Console.WriteLine(message);
+                        MessageRecived?.Invoke(message);
                         break;
                     case MessageType.GetMessage:
                         messageManager.SendTextMessage("??");
                         break;
-                    case MessageType.Winner:
-                        int winner;
-                        while (true)
-                        {
-                            var answersNumber = nexMessage.Attachment;
-                            Console.WriteLine("Select a winner:");
-                            if (int.TryParse(Console.ReadLine(), out winner))
-                            {
-                                if (winner > answersNumber || winner < 1)
-                                {
-                                    Console.WriteLine("Wrong answer");
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-
-                        }
-
+                    case MessageType.Winner:                      
+                        var winner = SelectWinner?.Invoke(nexMessage.Attachment);
                         messageManager.SendWinner(winner);
 
                         break;
                     case MessageType.RequestName:
-#if DEBUG
-                        var myPlayerName = "player";
-#else
-                    Console.WriteLine("Enter your name: ");
-                    var myPlayerName = Console.ReadLine();
-#endif
-                        messageManager.SendName(myPlayerName);
+                        messageManager.SendName(player.Name);
                         break;
                     case MessageType.SendName:
                         break;
@@ -121,16 +109,15 @@ namespace CardsOfConflict.Library.Game
                         //Console.WriteLine("Health Check done");
                         break;
                     case MessageType.NewRound:
-                        Console.Clear();
-                        Console.WriteLine($"====== Round {nexMessage.Attachment} ======");
-                        Console.WriteLine("My Cards");
-                        for (int i = 0; i < cards.Count; i++)
-                        {
-                            Console.WriteLine($"{i + 1}. {cards[i]}");
-                        }
+                        NextRound?.Invoke(nexMessage.Attachment, player.Cards);
                         break;
                     case MessageType.GameOver:
-                        isGameActive = false;
+                        GameOver?.Invoke();
+                        token.Cancel();
+                        break;
+                    case MessageType.GameStarted:
+                        var players = nexMessage.Attachment;
+                        GameStarted?.Invoke(players);
                         break;
                     default:
                         break;

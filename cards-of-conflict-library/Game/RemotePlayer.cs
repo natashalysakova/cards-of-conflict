@@ -1,5 +1,6 @@
 ﻿using CardsOfConflict.Library.Extentions;
 using CardsOfConflict.Library.Model;
+using System.Collections.ObjectModel;
 
 namespace CardsOfConflict.Library.Game;
 
@@ -64,5 +65,10 @@ internal class RemotePlayer : Player
     public override void Stop()
     {
         messageManager.Dispose();
+    }
+
+    public override void GameStarted(string[] players)
+    {
+        messageManager.GameStarted(players);
     }
 }

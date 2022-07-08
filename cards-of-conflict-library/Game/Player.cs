@@ -28,6 +28,9 @@ public abstract class Player : IPlayer
     }
 
     public abstract void GameOver();
+
+    public abstract void GameStarted(string[] players);
+
     public abstract IEnumerable<WhiteCard> GetAnswers(int answersNumber);
     public abstract int GetWinner(int answersNumber);
     public abstract void NewRound(int round);

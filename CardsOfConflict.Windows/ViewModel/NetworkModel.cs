@@ -9,6 +9,7 @@ namespace CardsOfConflict.Windows.ViewModel
     public class NetworkModel
     {
         int port;
+        string connectIp;
         public IPAddress ExternalIp
         {
             get => NetworkHelper.GetPublicIpAddress();
@@ -23,18 +24,31 @@ namespace CardsOfConflict.Windows.ViewModel
             {
                 if (port == 0)
                 {
-                    Port = int.Parse(ConfigurationManager.AppSettings["defaultPort"]);
+                    Port = Settings.Default.port;
                 }
                 return port;
             }
             set
             {
                 port = value;
-                ConfigurationManager.AppSettings["defaultPort"] = port.ToString();
+                Settings.Default.port = port;
+                Settings.Default.Save();
                 OnPropertyChanged(nameof(Port));
             }
         }
-
+        public string ConnectIp
+        {
+            get
+            {
+                return Settings.Default.lastConnected;
+            }
+            set
+            {
+                Settings.Default.lastConnected = value;
+                Settings.Default.Save();
+                OnPropertyChanged(nameof(Port));
+            }
+        }
 
 
 

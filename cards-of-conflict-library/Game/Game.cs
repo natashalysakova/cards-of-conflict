@@ -10,9 +10,11 @@ namespace CardsOfConflict.Library.Game
 
     public class Game : IDisposable
     {
+        public delegate void GameStartedDelegate(string[] players);
+
         ObservableCollection<IPlayer> players;
         CancellationTokenSource cancellationTokenSource;
-        public event EventHandler<EventArgs> GameStarted;
+        public event GameStartedDelegate GameStarted;
 
         public Game(ObservableCollection<IPlayer> players)
         {
@@ -148,9 +150,9 @@ namespace CardsOfConflict.Library.Game
             }
 
             player.Info = $"{players.Count} joined.";
-
-
-            GameStarted?.Invoke(this, new EventArgs());
+            var names = players.Select(x => x.Name).ToArray();
+            StartGame(names);
+            
 
             ServerGameLoop(deck);
 
@@ -158,7 +160,14 @@ namespace CardsOfConflict.Library.Game
             server.Stop();
         }
 
-
+        private void StartGame(string[] local)
+        {
+            GameStarted?.Invoke(local);
+            foreach (var player in players)
+            {
+                player.GameStarted(local);
+            }
+        }
 
         public int JoinTheGame()
         {
@@ -183,7 +192,73 @@ namespace CardsOfConflict.Library.Game
         }
 #endif
             game = new NormalGame();
+            game.RequestAnswers += Game_RequestAnswers;
+            game.MessageRecived += Game_MessageRecived;
+            game.SelectWinner += Game_SelectWinner;
+            game.NextRound += Game_NextRound;
+            game.GameOver += Game_GameOver;
             return game.JoinTheGame(ipAddress, port);
+        }
+
+        private void Game_GameOver()
+        {
+            Console.WriteLine("Game over");
+        }
+
+        private void Game_NextRound(int round, IEnumerable<WhiteCard> cards)
+        {
+            Console.Clear();
+            Console.WriteLine($"====== Round {round} ======");
+            Console.WriteLine("My Cards");
+            for (int i = 0; i < cards.Count(); i++)
+            {
+                Console.WriteLine($"{i + 1}. {cards.ElementAt(i)}");
+            }
+        }
+
+        private int Game_SelectWinner(int numberOfPlayers)
+        {
+            int winner;
+            while (true)
+            {
+                Console.WriteLine("Select a winner:");
+                if (int.TryParse(Console.ReadLine(), out winner))
+                {
+                    if (winner > numberOfPlayers || winner < 1)
+                    {
+                        Console.WriteLine("Wrong answer");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+            }
+            return winner;
+        }
+
+        private void Game_MessageRecived(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        private IEnumerable<int> Game_RequestAnswers(int numberOfAnswers)
+        {
+            Console.WriteLine($"Choose {numberOfAnswers} answers");
+            for (int i = 0; i < numberOfAnswers; i++)
+            {
+                int id;
+                while (true)
+                {
+                    Console.WriteLine($"Select answer #{i + 1}:");
+                    if (int.TryParse(Console.ReadLine(), out id))
+                    {
+                        break;
+                    }
+                }
+                yield return id - 1;
+            }
         }
 
         private void ServerGameLoop(Deck deck)

@@ -9,25 +9,7 @@
       Title="HostPage">
 
     <Grid>
-        <Grid.Resources>
-            <Style TargetType="TextBox">
-                <Setter Property="Width" Value="150"/>
-            </Style>
-            <Style TargetType="Button" x:Key="defButtonStyle">
-                <Setter Property="Margin" Value="10"/>
-                <Setter Property="Width" Value="200" />
-                <Setter Property="Height" Value="50" />
-            </Style>
-        </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
@@ -35,58 +17,83 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="Settings"/>
+        <TextBlock Grid.Row="0" Style="{StaticResource Header}" Text="Settings"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Ip address" Padding="0,0,10,0"/>
-        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Network.ExternalIp}" Padding="10,0,0,0"/>
+        <StackPanel Grid.Row="1">
+            <StackPanel Style="{StaticResource SettingStackPanes}">
+                <Label Content="External address"/>
+                <TextBlock Style="{StaticResource ReadonlySetting}" Text="{Binding Network.ExternalIp}" d:Text="198.106.145.228"/>
+                <Button Style="{StaticResource SimpleButton}" Content="&#xf328;" Click="Button_Click_2" Tag="external"></Button>
+            </StackPanel>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Local address" Padding="0,0,10,0"/>
-        <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Network.LocalIp}" Padding="10,0,0,0"/>
+            <StackPanel Style="{StaticResource SettingStackPanes}">
+                <Label Content="Local address"/>
+                <TextBlock Style="{StaticResource ReadonlySetting}" Text="{Binding Network.LocalIp}" d:Text="192.168.0.101"/>
+                <Button Style="{StaticResource SimpleButton}" Content="&#xf328;" Click="Button_Click_2" Tag="local"></Button>
+            </StackPanel>
 
-        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Port" Padding="0,0,10,0"/>
-        <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Network.Port}" Padding="10,0,0,0"/>
+            <StackPanel Style="{StaticResource SettingStackPanes}">
+                <Label Content="Port"/>
+                <TextBox Text="{Binding Network.Port}"/>
+            </StackPanel>
 
-        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Max Players" Padding="0,0,10,0"/>
-        <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding MaxPlayers}" Padding="10,0,0,0"/>
+            <StackPanel Style="{StaticResource SettingStackPanes}">
+                <Label Content="Max Players" />
+                <TextBox Text="{Binding MaxPlayers}" />
+            </StackPanel>
 
-        <TextBlock Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Player Name" Padding="0,0,10,0"/>
-        <TextBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding PlayerName}" Padding="10,0,0,0"/>
+            <StackPanel Style="{StaticResource SettingStackPanes}">
+                <Label Content="Player Name" />
+                <TextBox Text="{Binding PlayerName}"/>
+            </StackPanel>
+        </StackPanel>
 
-        <Grid Grid.Row="6" Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="Decks"/>
-            <ListView Grid.Row="1" ItemsSource="{Binding DeckList}">
-                <ListView.ItemTemplate>
-                    <DataTemplate DataType="DeckViewModel">
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding Enabled}"/>
+        <Grid Grid.Row="2" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid Grid.Column="0" Margin="10,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="Decks"/>
+                <ListView Grid.Row="1" ItemsSource="{Binding DeckList}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="DeckViewModel">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding Enabled}"/>
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="IsSelected" Value="{Binding Enabled}"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Grid>
+            <Grid Grid.Column="1" Margin="10,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="Lobby"/>
+                <ListBox Grid.Row="1" ItemsSource="{Binding Players}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="IPlayer">
                             <TextBlock Text="{Binding Name}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
         </Grid>
+        <TextBlock Grid.Row="3" Text="{Binding Info}" d:Text="Lorem Ipsum dolor sit amet" TextAlignment="Center" Padding="5"/>
 
-        <Grid Grid.Row="6" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="Lobby"/>
-            <ListBox Grid.Row="1" ItemsSource="{Binding Players}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="IPlayer">
-                        <TextBlock Text="{Binding Name}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Grid>
-
-        <TextBlock Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" Text="{Binding Info}"/>
-        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="8" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="4" Style="{StaticResource SettingStackPanes}">
             <Button Click="Button_Click_1" Content="Back" Style="{StaticResource defButtonStyle}"></Button>
             <Button Click="Button_Click" d:Content="Run">
                 <Button.Style>
@@ -103,6 +110,5 @@
                 </Button.Style>
             </Button>
         </StackPanel>
-
     </Grid>
 </Page>

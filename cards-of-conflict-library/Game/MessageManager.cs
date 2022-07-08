@@ -1,5 +1,6 @@
 ﻿using CardsOfConflict.Library.Enums;
 using CardsOfConflict.Library.Model;
+using System.Collections.ObjectModel;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -63,6 +64,15 @@ namespace CardsOfConflict.Library.Game
             var message = new Message(MessageType.NewRound)
             {
                 Attachment = round
+            };
+            SendMessage(message);
+        }
+
+        internal void GameStarted(string[] players)
+        {
+            var message = new Message(MessageType.GameStarted)
+            {
+                Attachment = players
             };
             SendMessage(message);
         }

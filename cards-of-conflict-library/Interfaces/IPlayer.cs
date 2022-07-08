@@ -23,4 +23,6 @@ public interface IPlayer
     ObservableCollection<WhiteCard> Cards { get; }
     string Info { get; set; }
     event EventHandler InfoChanged;
+
+    void GameStarted(string[] players);
 }

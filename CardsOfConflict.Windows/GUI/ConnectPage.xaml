@@ -9,6 +9,35 @@
       Title="ConnectPage">
 
     <Grid>
-        <TextBlock Text="ConnectPage"></TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+ 
+        <TextBlock Grid.Row="0" Text="Join game" Style="{StaticResource Header}"/>
+
+        <StackPanel Grid.Row="2">
+            <StackPanel Style="{StaticResource SettingStackPanes}">
+                <Label Content="Ip address"/>
+                <TextBox Text="{Binding Network.ConnectIp}"/>
+            </StackPanel>
+            <StackPanel Style="{StaticResource SettingStackPanes}">
+                <Label Content="Port"/>
+                <TextBox Text="{Binding Network.Port}"/>
+            </StackPanel>
+            <StackPanel  Style="{StaticResource SettingStackPanes}">
+                <Label Content="Player Name"/>
+                <TextBox Text="{Binding PlayerName}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Style="{StaticResource SettingStackPanes}">
+            <Button Click="Button_Click" Content="Back" Style="{StaticResource defButtonStyle}"></Button>
+            <Button Click="Button_Click_1" Content="Join" Style="{StaticResource defButtonStyle}"></Button>
+        </StackPanel>
+
     </Grid>
 </Page>
